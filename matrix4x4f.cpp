@@ -81,3 +81,19 @@ void matrix4x4f::transformVector(vector3f *vec) {
           z * m[10];
 
 }
+
+matrix4x4f matrix4x4f::operator * (const matrix4x4f &other) {
+	matrix4x4f result(0,0,0,0,
+					  0,0,0,0,
+					  0,0,0,0,
+					  0,0,0,0);
+	
+	for(unsigned short int i=0; i<4; i++) {
+		for(unsigned short int j=0; j<4; j++) {
+			for(unsigned short int k=0; k<4; k++){
+				result.m[getIndex(i,j)] += m[getIndex(i,k)] * other.m[getIndex(k,j)];
+			}
+		}
+	}
+	return result;
+}

@@ -52,12 +52,17 @@ matrix4x4f close2gl::projection() {
 //⎣   0        0      -1         0   ⎦
 
 	float r, l, t, b, n, f;
-	r = mesh.max[0];
-	l = mesh.min[0];
-	t = mesh.max[1];
-	b = mesh.min[1];
-	n = cam.znear;
-	f = cam.zfar;
+	t = cam.znear * tan(cam.fovy/2);
+	b = -t;
+	r = t * (width/height);
+	l = -r;
+
+//	r = mesh.max[0];
+//	l = mesh.min[0];
+//	t = mesh.max[1];
+//	b = mesh.min[1];
+//	n = cam.znear;
+//	f = cam.zfar;
 
 	matrix4x4f m;
 	m.m[0] = (2*n)/(r-l); m.m[1] = 0          ; m.m[2]  = (r+l)/(r-l); m.m[3] = 0;
@@ -71,4 +76,22 @@ matrix4x4f close2gl::projection() {
 
 matrix4x4f close2gl::viewport() {
 
+}
+
+void close2gl::mainLoop(Camera cam) {
+	vector4f aux;
+	//Map WCS -> CCS -> SCS
+
+	//Set camera parameters
+	this->cam = cam;	
+
+	//foreach point, do P_scs = Projection * Modelview * P_wcs
+	for(int i=0; i<mesh.n_triangles; i++) {
+		
+	}
+	
+	//Clipping
+	//Perpective division
+	//Maps to viewport
+	//Draw
 }

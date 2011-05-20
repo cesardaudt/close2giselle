@@ -13,6 +13,7 @@
 
 #define DEGTORAD(degree) ((degree) * (3.141592654f / 180.0f))
 #define RADTODEG(radian) ((radian) * (180.0f / 3.141592654f))
+#define getIndex(i,j)	 (j + 4*i)
 
 class matrix4x4f {
 
@@ -32,6 +33,9 @@ class matrix4x4f {
 		void rotate(const float angle, vector3f axis);
 
 		void transformVector(vector3f *vec);
+		
+		//operators		
+		matrix4x4f operator * (const matrix4x4f &other);
 
 };
 
