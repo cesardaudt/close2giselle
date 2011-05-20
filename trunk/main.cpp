@@ -2,27 +2,31 @@
 #include "vector3f.h"
 #include "mesh.h"
 #include "camera.h"
+#include "close2gl.h"
 #include <GL/glut.h>
 #include <GL/glui.h>
 //#include <GL/freeglut_ext.h>
 
-#define WIDTH		640
-#define HEIGHT		480
-#define WINS 		2
-#define MAIN_WIN 	0
-#define INC			6.5
+#define WIDTH			640
+#define HEIGHT			480
+#define WINS 			2
+#define OPENGL_WIN 		0
+#define CLOSE2GL_WIN 	0
+#define INC				6.5
 
 int wins[WINS];
 int w = WIDTH;
 int h = HEIGHT;
 
-typedef struct mouse {
-	float x;
-	float y;
-} Mouse;
+//typedef struct mouse {
+//	float x;
+//	float y;
+//} Mouse;
 
-Mouse mouse_current;
-Mouse mouse_last = {0.0, 0.0};
+//Mouse mouse_current;
+//Mouse mouse_last = {0.0, 0.0};
+
+close2gl Close2GL;
 
 Camera cam;
 Mesh m1;
@@ -51,6 +55,8 @@ void reset() {
 void load() {
 	m1.name = file;
 	m1.readFromFile();
+	Close2GL.mesh.name = file;
+	Close2GL.mesh.readFromFile();
 }
 
 void display() {
@@ -111,7 +117,7 @@ void reshape(int w, int h) {
 }
 
 void idle() {
-	glutSetWindow(wins[MAIN_WIN]);
+	glutSetWindow(wins[OPENGL_WIN]);
 	glutPostRedisplay();
 }
 
@@ -257,8 +263,8 @@ void setGlui() {
 	GLUI_EditText *edittext = glui->add_edittext_to_panel (obj_panel5, "File name:", GLUI_EDITTEXT_TEXT, file, NULL);
 	GLUI_Button *button2 = glui->add_button_to_panel (obj_panel5, "Load Model", NULL, GLUI_Update_CB(load));
 	
-	glui->set_main_gfx_window(wins[MAIN_WIN]);
-	glutSetWindow(wins[MAIN_WIN]);
+	glui->set_main_gfx_window(wins[OPENGL_WIN]);
+	glutSetWindow(wins[OPENGL_WIN]);
 	GLUI_Master.set_glutIdleFunc(idle);
 }
 
@@ -309,7 +315,7 @@ void setGlut() {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
 	glutInitWindowPosition(0, 0); 
 	glutInitWindowSize(w,h); 
-	wins[MAIN_WIN] = glutCreateWindow("Close to GL"); 
+	wins[OPENGL_WIN] = glutCreateWindow("OpenGL"); 
 	glutDisplayFunc(display); 
 	glutReshapeFunc(reshape); 
 	glutIdleFunc(idle);
@@ -317,6 +323,17 @@ void setGlut() {
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 //	glutMouseWheelFunc(mouse);
+
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
+	glutInitWindowPosition(0+w, 0); 
+	glutInitWindowSize(w,h); 
+	wins[CLOSE2GL_WIN] = glutCreateWindow("Close2GL"); 
+	glutDisplayFunc(display); 
+	glutReshapeFunc(reshape); 
+	glutIdleFunc(idle);
+	glutSpecialFunc(specialFunc);
+	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
 }
 
 int main(int argc, char** argv) {	
@@ -324,6 +341,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
+		//do the same with close2gl
 	}	
 	//setGl();
 	setGlut();

@@ -48,5 +48,9 @@ class vector3f
 		vector3f operator - (void) const;
 };
 
+typedef struct vec4d {
+	vector3f vec;
+	float	 w;
+} vector4f;
 
 #endif // _VECTOR3F_H_
