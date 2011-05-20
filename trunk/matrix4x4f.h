@@ -31,7 +31,7 @@ class matrix4x4f {
 
 		void rotate(const float angle, vector3f axis);
 
-		void transformVector( vector3f *vec );
+		void transformVector(vector3f *vec);
 
 };
 
