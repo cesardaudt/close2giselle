@@ -29,10 +29,11 @@ class Camera {
 			
 		//constructors & destructors
 		Camera();
+		Camera(float max[3], float min[3], int w, int h, vector3f translate, vector3f rotation, int lookat);
 		~Camera();
 		
 		//methods
-		void set(float max[2], float min[2], int w, int h, vector3f translate, vector3f rotation, int lookat);
+		void set(float max[3], float min[3], int w, int h, vector3f translate, vector3f rotation, int lookat);
 };
 
 #endif
