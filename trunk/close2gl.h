@@ -26,10 +26,7 @@ class close2gl {
 		int				win_y;
 		int				n_clipped_triangles;
 		Camera*			cam;
-//		matrix4x4f 		transform;	//maybe it's not necessary
-//		matrix4x4f 		aux;		//maybe it's not necessary
 		Mesh* 			mesh;
-//		string			mesh_name;	//maybe it's not necessary
 		vector<HomTri>	SCStriangles;
 		vector<HomTri>	clipped_triangles;
 		//constructors & destructors

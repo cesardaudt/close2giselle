@@ -48,6 +48,7 @@ class vector3f
 		vector3f operator - (void) const;
 };
 
+//Vector in Homogeneous Coordinates(4D)
 typedef struct vec4d {
 	vector3f vec;
 	float	 w;

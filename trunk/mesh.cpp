@@ -57,6 +57,7 @@ void Mesh::readFromFile() {
 		
 		triangles.reserve(n_triangles); //alocate space
 		//read triangles
+		//TODO: try to find max and min values with vector functions
 		for(i=0; i<n_triangles; i++) {
 			fscanf(f_pt, "v0 %f %f %f %f %f %f %d\n",
 					&(triangles[i].v0.x), &(triangles[i].v0.y), &(triangles[i].v0.z),
