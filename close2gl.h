@@ -24,6 +24,7 @@ class close2gl {
 		int				height;
 		int				win_x;
 		int				win_y;
+		int				n_clipped_triangles;
 		Camera*			cam;
 //		matrix4x4f 		transform;	//maybe it's not necessary
 //		matrix4x4f 		aux;		//maybe it's not necessary
