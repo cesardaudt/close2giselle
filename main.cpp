@@ -5,7 +5,6 @@
 #include "close2gl.h"
 #include <GL/glut.h>
 #include <GL/glui.h>
-//#include <GL/freeglut_ext.h>
 
 #define WIDTH			640
 #define HEIGHT			480
@@ -17,14 +16,6 @@
 int wins[WINS];
 int w = WIDTH;
 int h = HEIGHT;
-
-//typedef struct mouse {
-//	float x;
-//	float y;
-//} Mouse;
-
-//Mouse mouse_current;
-//Mouse mouse_last = {0.0, 0.0};
 
 close2gl Close2GL;
 
@@ -296,7 +287,6 @@ void setGlui() {
 }
 
 void setGl() {
-	//clear buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
@@ -378,9 +368,9 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		Close2GL = close2gl(WIDTH, HEIGHT, 0+WIDTH, 0, &cam, &m1);
+		Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
 	}	
-	//setGl();
+	
 	setGlut();
 	setGlui();
 	

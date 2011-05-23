@@ -24,11 +24,7 @@ close2gl::close2gl() {
 	win_y = 1;
 	n_clipped_triangles = 0;
 	cam   = NULL;
-//	transform;
-//	aux;		//maybe it's not necessary
 	mesh  = NULL;
-//	mesh_name;
-//	SCSTriangles;	
 }
 
 close2gl::~close2gl() {}
@@ -131,7 +127,6 @@ void close2gl::mainLoop() {
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
 		to4d(aux,mesh->triangles[i]);
-//		printf("i variando:%i\n", i);
 		mproj.transform(&(aux.v0));
 		mproj.transform(&(aux.v1));
 		mproj.transform(&(aux.v2));
