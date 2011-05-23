@@ -97,3 +97,12 @@ matrix4x4f matrix4x4f::operator * (const matrix4x4f &other) {
 	}
 	return result;
 }
+
+void matrix4x4f::transform(vector4f *v) {
+//	result.vec.x = m[0]*v.vec.x + m[4]*v.vec.y + m[8]*v.vec.z  + m[12]*v.w;
+//	result.vec.y = m[1]*v.vec.x + m[5]*v.vec.y + m[9]*v.vec.z  + m[13]*v.w;
+//	result.vec.z = m[2]*v.vec.x + m[6]*v.vec.y + m[10]*v.vec.z + m[14]*v.w;
+//	result.w	 = m[3]*v.vec.x + m[7]*v.vec.y + m[11]*v.vec.z + m[15]*v.w;
+	this->transformVector(&(v->vec));
+	v->w = m[3]*(v->vec.x) + m[7]*(v->vec.y) + m[11]*(v->vec.z) + m[15]*(v->w);
+}

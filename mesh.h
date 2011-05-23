@@ -17,12 +17,19 @@ typedef struct rgb_col {
 	float r, g, b;
 } Color;
 
-typedef struct tri {
+typedef struct triangle_3d {
 	vector3f v0, v1, v2;
 	vector3f normals[3];	//vertices normals
 	vector3f t_normal;		//triangle normal
 	Color color;
 } Triangle;
+
+typedef struct triangle_4d {
+	vector4f v0, v1, v2;
+	vector3f normals[3];
+	vector3f t_normal;
+	Color color;
+} HomTri;
 
 class Mesh {
 	public:
