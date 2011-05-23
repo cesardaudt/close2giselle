@@ -1,12 +1,13 @@
 #include "close2gl.h"
 
 close2gl::close2gl(int width, int height, int win_x, int win_y, Camera* cam, Mesh* mesh) {
-	this->width	= width;
-	this->height= height;
-	this->win_x	= win_x;
-	this->win_y	= win_y;
-	this->cam	= cam;
-	this->mesh	= mesh;
+	this->width				  = width;
+	this->height		 	  = height;
+	this->win_x				  = win_x;
+	this->win_y				  = win_y;
+	this->n_clipped_triangles = 0;
+	this->cam				  = cam;
+	this->mesh				  = mesh;
 	//Now, we have the triangle mesh and u,v,n vectors
 	//To display the image, we should perform:
 	//1)Coordinates mapping (WCS->CCS and CCS->SCS)
@@ -21,6 +22,7 @@ close2gl::close2gl() {
 	height= 1;
 	win_x = 1;
 	win_y = 1;
+	n_clipped_triangles = 0;
 	cam   = NULL;
 //	transform;
 //	aux;		//maybe it's not necessary
@@ -72,6 +74,28 @@ matrix4x4f close2gl::projection() {
 }
 
 matrix4x4f close2gl::viewport() {
+//⎡ (rv − lv)	0			0	(rv + lv) ⎤
+//⎢	    2							2	  ⎥
+//⎢	  		 (tv − bv)		0	(tv + bv) ⎥
+//⎢	  0			 2					2     ⎥
+//⎢										  ⎥
+//⎢	  0			0			1		0     ⎥
+//⎢										  ⎥
+//⎢   0			0			0		1	  ⎥
+//⎣										  ⎦
+
+	float rv, lv, tv, bv;
+	lv = 0+width;
+	bv = 0+height;
+	rv = lv+width;
+	tv = bv-height;
+
+	matrix4x4f m;
+	m.m[0] = (rv-lv)/2	; m.m[4] = 0          ; m.m[8]  = 0 ; m.m[12] = (rv+lv)/2;
+	m.m[1] = 0          ; m.m[5] = (tv-bv)/2  ; m.m[9]  = 0 ; m.m[13] = (tv+bv)/2;
+	m.m[2] = 0          ; m.m[6] = 0          ; m.m[10] = 1	; m.m[14] = 0;
+	m.m[3] = 0          ; m.m[7] = 0          ; m.m[11] = 0 ; m.m[15] = 1;
+	return m;
 
 }
 
@@ -79,12 +103,14 @@ void close2gl::mainLoop() {
 	HomTri aux;
 	matrix4x4f proj;
 	matrix4x4f modview;
+	matrix4x4f vport;
 	matrix4x4f mproj;
 
 	//Map WCS -> CCS -> SCS		
-	proj = projection();
+	proj 	= projection();
 	modview = modelView();
-	mproj = proj*modview;
+	mproj 	= proj*modview;
+	vport	= viewport();
 	
 	SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -99,6 +125,7 @@ void close2gl::mainLoop() {
 	
 	//Clipping
 	//foreach triangle, if one point doesn't satisfy abs(x), abs(y), abs(z) < abs(w), do not draw it
+	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
 			//vertex v0
 		if(	(abs(SCStriangles[i].v0.vec.x) < abs(SCStriangles[i].v0.w)) &&
@@ -114,13 +141,36 @@ void close2gl::mainLoop() {
 			(abs(SCStriangles[i].v2.vec.z) < abs(SCStriangles[i].v2.w))		)
 		{
 			clipped_triangles.push_back(SCStriangles[i]);
+			n_clipped_triangles++;
 		}
 	}
 	
 	//Perspective division
+	for(int i = 0; i < n_clipped_triangles; i++) {
+		clipped_triangles[i].v0.vec.x /= clipped_triangles[i].v0.w;
+		clipped_triangles[i].v0.vec.y /= clipped_triangles[i].v0.w;
+		clipped_triangles[i].v0.vec.z /= clipped_triangles[i].v0.w;
+		clipped_triangles[i].v0.w  = 1;
+	
+		clipped_triangles[i].v1.vec.x /= clipped_triangles[i].v1.w;
+		clipped_triangles[i].v1.vec.y /= clipped_triangles[i].v1.w;
+		clipped_triangles[i].v1.vec.z /= clipped_triangles[i].v1.w;
+		clipped_triangles[i].v1.w  = 1;
+		
+		clipped_triangles[i].v2.vec.x /= clipped_triangles[i].v2.w;
+		clipped_triangles[i].v2.vec.y /= clipped_triangles[i].v2.w;
+		clipped_triangles[i].v2.vec.z /= clipped_triangles[i].v2.w;
+		clipped_triangles[i].v2.w  = 1;	
+	}
 	
 	//Maps to viewport
+	for(int i = 0; i < n_clipped_triangles; i++) {
+		vport.transform(&(clipped_triangles[i].v0));
+		vport.transform(&(clipped_triangles[i].v1));
+		vport.transform(&(clipped_triangles[i].v2));
+	}
 	
 	//Draw
+	
 	printf("Fim do frame\n");
 }
