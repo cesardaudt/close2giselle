@@ -58,13 +58,16 @@ matrix4x4f close2gl::projection() {
 //⎣   0        0      -1         0   ⎦
 
 	float r, l, t, b, n, f;
-	t = cam->znear * tan(cam->fovy/2);
+	t = cam->znear * tan(DEG_RAD(cam->fovy/2));
 	b = -t;
-	r = t * (width/height);
+	r = t * ((float)width/(float)height);
 	l = -r;
+	n = cam->znear;
+	f = cam->zfar;
 	
-//	printf("\nznear:%f fovy:%f\n", cam->znear, cam->fovy);
-	printf("\nwidth:%f height:%f\n", width, height);
+	printf("\nznear:%f fovy:%f\n", cam->znear, cam->fovy);
+	printf("\nwidth:%d height:%d\n", width, height);
+	printf("\naspect:%f", (float)width/(float)height);
 	printf("\nt:%f b:%f r:%f l:%f\n", t,b,r,l);
 	
 	matrix4x4f m;
@@ -110,18 +113,18 @@ void close2gl::mainLoop() {
 
 	//Map WCS -> CCS -> SCS		
 	proj 	= projection();
-	printf("\n My Projection matrix\n");
-	printMatrix(proj);
+//	printf("\n My Projection matrix\n");
+//	printMatrix(proj);
 	
 	modview = modelView();
-	printf("\n My ModelView matrix\n");
-	printMatrix(modview);
+//	printf("\n My ModelView matrix\n");
+//	printMatrix(modview);
 	
 	mproj 	= proj*modview;
 	
 	vport	= viewport();
-//	printf("\nViewport matrix\n");
-//	printMatrix(vport);
+	printf("\nViewport matrix\n");
+	printMatrix(vport);
 	
 	SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -138,21 +141,23 @@ void close2gl::mainLoop() {
 	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
 			//vertex v0
-		if(	(abs(SCStriangles[i].v0.vec.x) < abs(SCStriangles[i].v0.w)) &&
-			(abs(SCStriangles[i].v0.vec.y) < abs(SCStriangles[i].v0.w)) &&
-			(abs(SCStriangles[i].v0.vec.z) < abs(SCStriangles[i].v0.w)) &&
-			//vertex v1
-			(abs(SCStriangles[i].v1.vec.x) < abs(SCStriangles[i].v1.w)) &&
-			(abs(SCStriangles[i].v1.vec.y) < abs(SCStriangles[i].v1.w)) &&
-			(abs(SCStriangles[i].v1.vec.z) < abs(SCStriangles[i].v1.w)) &&
-			//vertex v2
-			(abs(SCStriangles[i].v2.vec.x) < abs(SCStriangles[i].v2.w)) &&
-			(abs(SCStriangles[i].v2.vec.y) < abs(SCStriangles[i].v2.w)) &&
-			(abs(SCStriangles[i].v2.vec.z) < abs(SCStriangles[i].v2.w))		)
-		{
+//		if(	(abs(SCStriangles[i].v0.vec.x) < abs(SCStriangles[i].v0.w)) &&
+//			(abs(SCStriangles[i].v0.vec.y) < abs(SCStriangles[i].v0.w)) &&
+//			(abs(SCStriangles[i].v0.vec.z) < abs(SCStriangles[i].v0.w)) &&
+//			//vertex v1
+//			(abs(SCStriangles[i].v1.vec.x) < abs(SCStriangles[i].v1.w)) &&
+//			(abs(SCStriangles[i].v1.vec.y) < abs(SCStriangles[i].v1.w)) &&
+//			(abs(SCStriangles[i].v1.vec.z) < abs(SCStriangles[i].v1.w)) &&
+//			//vertex v2
+//			(abs(SCStriangles[i].v2.vec.x) < abs(SCStriangles[i].v2.w)) &&
+//			(abs(SCStriangles[i].v2.vec.y) < abs(SCStriangles[i].v2.w)) &&
+//			(abs(SCStriangles[i].v2.vec.z) < abs(SCStriangles[i].v2.w))		)
+//		{
 			clipped_triangles.push_back(SCStriangles[i]);
 			n_clipped_triangles++;
-		}
+//			printf("*********************************CLIPOU*********************************");
+//		}
+//		printf("*********************************CLIPOU*********************************");
 	}
 	
 	//Perspective division
