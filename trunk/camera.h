@@ -29,7 +29,7 @@ class Camera {
 			
 		//constructors & destructors
 		Camera();
-		Camera(float max[3], float min[3], int w, int h, vector3f translate, vector3f rotation, int lookat);
+//		Camera(float max[3], float min[3], int w, int h, vector3f translate, vector3f rotation, int lookat);
 		~Camera();
 		
 		//methods

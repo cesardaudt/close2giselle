@@ -11,7 +11,7 @@
 #define HEIGHT			480
 #define WINS 			2
 #define OPENGL_WIN 		0
-#define CLOSE2GL_WIN 	0
+#define CLOSE2GL_WIN 	1
 #define INC				6.5
 
 int wins[WINS];
@@ -55,25 +55,12 @@ void reset() {
 void load() {
 	m1.name = file;
 	m1.readFromFile();
-	Close2GL.mesh.name = file;
-	Close2GL.mesh.readFromFile();
+	Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
 }
 
 void display() {
     
     setGl();
-    
-    if(vertex_orientation)
-	    glFrontFace(GL_CW);
-	else
-		glFrontFace(GL_CCW);
-		
-	if(bfculling) {
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
-	else
-		glDisable(GL_CULL_FACE);
     
     cam.set(m1.max, m1.min, w, h, translate, rotation, lookat);
     	
@@ -106,6 +93,20 @@ void display() {
     GLUI_Master.sync_live_all();
 }
 
+void displayC2GL() {
+	//clear buffers
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearDepth(1.0f);
+	
+	if(Close2GL.mesh != NULL) {
+		Close2GL.mainLoop();
+	}	
+	
+    glutSwapBuffers();
+}
+
 void reshape(int w, int h) {
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 	glMatrixMode(GL_PROJECTION);
@@ -118,6 +119,8 @@ void reshape(int w, int h) {
 
 void idle() {
 	glutSetWindow(wins[OPENGL_WIN]);
+	glutPostRedisplay();
+	glutSetWindow(wins[CLOSE2GL_WIN]);
 	glutPostRedisplay();
 }
 
@@ -297,7 +300,18 @@ void setGl() {
 		glDisable(GL_LIGHT0);
 	}
 	
-	glEnable(GL_CULL_FACE);
+	if(vertex_orientation)
+	    glFrontFace(GL_CW);
+	else
+		glFrontFace(GL_CCW);
+		
+	if(bfculling) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+	else
+		glDisable(GL_CULL_FACE);
+    
 	
    	glEnable(GL_DEPTH_TEST);
 
@@ -322,13 +336,12 @@ void setGlut() {
 	glutSpecialFunc(specialFunc);
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
-//	glutMouseWheelFunc(mouse);
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); 
 	glutInitWindowPosition(0+w, 0); 
 	glutInitWindowSize(w,h); 
 	wins[CLOSE2GL_WIN] = glutCreateWindow("Close2GL"); 
-	glutDisplayFunc(display); 
+	glutDisplayFunc(displayC2GL); 
 	glutReshapeFunc(reshape); 
 	glutIdleFunc(idle);
 	glutSpecialFunc(specialFunc);
@@ -341,7 +354,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		//do the same with close2gl
+		Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
 	}	
 	//setGl();
 	setGlut();
