@@ -102,8 +102,32 @@ void displayC2GL() {
 	
 	if(Close2GL.mesh != NULL) {
 		Close2GL.mainLoop();
+		
+		glColor3fv(&(color.r));
+		if(wireframe) {
+			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+			polygon = 0; point = 0;
+		}
+		else if(point) {
+			glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+			wireframe = 0; polygon = 0;
+		}
+		else if(polygon) {
+			glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			wireframe = 0; point = 0;
+		}
+		for(unsigned int i=0; i<Close2GL.n_clipped_triangles; i++) {
+			glBegin(GL_TRIANGLES);
+				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[0].x));
+				glVertex3fv(&(Close2GL.clipped_triangles[i].v0.vec.x));
+				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[1].x));
+				glVertex3fv(&(Close2GL.clipped_triangles[i].v1.vec.x));
+				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[2].x));
+				glVertex3fv(&(Close2GL.clipped_triangles[i].v2.vec.x));
+			glEnd();
+		}
+		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
 	}	
-	
     glutSwapBuffers();
 }
 
@@ -354,7 +378,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
+		Close2GL = close2gl(WIDTH, HEIGHT, 0+WIDTH, 0, &cam, &m1);
 	}	
 	//setGl();
 	setGlut();

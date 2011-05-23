@@ -39,10 +39,12 @@ matrix4x4f close2gl::modelView() {
 //	⎢ zc ⎥ ⎢nx ny nz − Oc ⋅ n ⎥ ⎢ zw ⎥
 //	⎣ 1  ⎦ ⎣0  0  0    1      ⎦ ⎣ 1  ⎦
 	
+//TODO: row of z component with sign inverted
+// hardcoded minus to make it work
 	matrix4x4f m;
 	m.m[0] = cam->u.x; m.m[4] = cam->u.y; m.m[8]  = cam->u.z; m.m[12] = vector3f::dotProduct(-(cam->look_from), cam->u);
 	m.m[1] = cam->v.x; m.m[5] = cam->v.y; m.m[9]  = cam->v.z; m.m[13] = vector3f::dotProduct(-(cam->look_from), cam->v);
-	m.m[2] = cam->n.x; m.m[6] = cam->n.y; m.m[10] = cam->n.z; m.m[14] = vector3f::dotProduct(-(cam->look_from), cam->n);
+	m.m[2] =-(cam->n.x); m.m[6] =-(cam->n.y); m.m[10] =-(cam->n.z); m.m[14] = -(vector3f::dotProduct(-(cam->look_from), cam->n));
 	m.m[3] = 0       ; m.m[7]= 0        ; m.m[11] = 0       ; m.m[15] = 1;
 	return m;
 }
@@ -51,8 +53,8 @@ matrix4x4f close2gl::projection() {
 //⎡  2n               (r + l)        ⎤
 //⎢(r − l )    0      (r − l)    0   ⎥
 //⎢                                  ⎥
-//⎢			2n      (t + b)          ⎥
-//⎢   0	  (t − b)   (t − b)    0     ⎥
+//⎢			  2n      (t + b)        ⎥
+//⎢   0	    (t − b)   (t − b)    0   ⎥
 //⎢                                  ⎥
 //⎢                  -(f + n)  -2fn  ⎥
 //⎢   0        0      (f − n) (f − n)⎥
@@ -64,6 +66,10 @@ matrix4x4f close2gl::projection() {
 	b = -t;
 	r = t * (width/height);
 	l = -r;
+	
+//	printf("\nznear:%f fovy:%f\n", cam->znear, cam->fovy);
+	printf("\nwidth:%f height:%f\n", width, height);
+	printf("\nt:%f b:%f r:%f l:%f\n", t,b,r,l);
 	
 	matrix4x4f m;
 	m.m[0] = (2*n)/(r-l); m.m[4] = 0          ; m.m[8]  = (r+l)/(r-l); m.m[12] = 0;
@@ -108,9 +114,18 @@ void close2gl::mainLoop() {
 
 	//Map WCS -> CCS -> SCS		
 	proj 	= projection();
+	printf("\n My Projection matrix\n");
+	printMatrix(proj);
+	
 	modview = modelView();
+	printf("\n My ModelView matrix\n");
+	printMatrix(modview);
+	
 	mproj 	= proj*modview;
+	
 	vport	= viewport();
+//	printf("\nViewport matrix\n");
+//	printMatrix(vport);
 	
 	SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -171,6 +186,12 @@ void close2gl::mainLoop() {
 	}
 	
 	//Draw
-	
-	printf("Fim do frame\n");
+	//done at display func
+	system("clear");
+}
+
+void close2gl::printMatrix(matrix4x4f mat) {
+	for(int i = 0; i<4; i++) {
+		printf("%f \t %f \t %f \t %f \n", mat.m[i%4], mat.m[(i%4)+4], mat.m[(i%4)+8], mat.m[(i%4)+12]);
+	}
 }

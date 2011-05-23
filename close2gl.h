@@ -51,6 +51,9 @@ class close2gl {
 		//Map to viewport
 		//Draw
 		void mainLoop();
+		
+		//debug
+		void printMatrix(matrix4x4f mat);
 };
 
 #endif
