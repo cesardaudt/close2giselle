@@ -11,6 +11,9 @@
 
 #include <cmath>
 
+#define DEG_RAD(theta) (theta*M_PI)/180
+#define maxabs(x,y) ((abs(x)>abs(y)) ? (x) : (y))
+
 class vector3f
 {
 	public:
