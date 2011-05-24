@@ -100,5 +100,8 @@ matrix4x4f matrix4x4f::operator * (const matrix4x4f &other) {
 
 void matrix4x4f::transform(vector4f *v) {
 	this->transformVector(&(v->vec));
+	v->vec.x += v->w * m[12];
+	v->vec.y += v->w * m[13];
+	v->vec.z += v->w * m[14];
 	v->w = m[3]*(v->vec.x) + m[7]*(v->vec.y) + m[11]*(v->vec.z) + m[15]*(v->w);
 }
