@@ -95,6 +95,8 @@ void displayC2GL() {
 		Close2GL.mainLoop();
 		
 		glColor3fv(&(color.r));
+		gluOrtho2D(0, w, 0, h);
+//		glLoadIdentity();
 		if(wireframe) {
 			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 			polygon = 0; point = 0;
@@ -118,6 +120,8 @@ void displayC2GL() {
 			glEnd();
 		}
 		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
+		Close2GL.SCStriangles.clear();
+		Close2GL.clipped_triangles.clear();
 	}	
     glutSwapBuffers();
 }

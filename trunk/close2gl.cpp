@@ -90,10 +90,10 @@ matrix4x4f close2gl::viewport() {
 //⎣										  ⎦
 
 	float rv, lv, tv, bv;
-	lv = 0+width;
-	bv = 0+height;
-	rv = lv+width;
-	tv = bv-height;
+	lv = win_x;
+	bv = win_y+height;
+	rv = win_x+width;
+	tv = win_y;
 
 	matrix4x4f m;
 	m.m[0] = (rv-lv)/2	; m.m[4] = 0          ; m.m[8]  = 0 ; m.m[12] = (rv+lv)/2;
@@ -101,7 +101,6 @@ matrix4x4f close2gl::viewport() {
 	m.m[2] = 0          ; m.m[6] = 0          ; m.m[10] = 1	; m.m[14] = 0;
 	m.m[3] = 0          ; m.m[7] = 0          ; m.m[11] = 0 ; m.m[15] = 1;
 	return m;
-
 }
 
 void close2gl::mainLoop() {
@@ -121,70 +120,84 @@ void close2gl::mainLoop() {
 //	printMatrix(modview);
 	
 	mproj 	= proj*modview;
+	printf("\n My ModelViewProj matrix\n");
+	printMatrix(mproj);
 	
 	vport	= viewport();
 	printf("\nViewport matrix\n");
 	printMatrix(vport);
 	
-	SCStriangles.reserve(mesh->n_triangles);
+	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
 		to4d(aux,mesh->triangles[i]);
 		mproj.transform(&(aux.v0));
 		mproj.transform(&(aux.v1));
 		mproj.transform(&(aux.v2));
-		SCStriangles[i] = aux;
+		SCStriangles.push_back(aux);
 	}
 	
 	//Clipping
 	//foreach triangle, if one point doesn't satisfy abs(x), abs(y), abs(z) < abs(w), do not draw it
 	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
+//		printf("\nStarting Clipping\n");
 			//vertex v0
-//		if(	(abs(SCStriangles[i].v0.vec.x) < abs(SCStriangles[i].v0.w)) &&
-//			(abs(SCStriangles[i].v0.vec.y) < abs(SCStriangles[i].v0.w)) &&
-//			(abs(SCStriangles[i].v0.vec.z) < abs(SCStriangles[i].v0.w)) &&
-//			//vertex v1
-//			(abs(SCStriangles[i].v1.vec.x) < abs(SCStriangles[i].v1.w)) &&
-//			(abs(SCStriangles[i].v1.vec.y) < abs(SCStriangles[i].v1.w)) &&
-//			(abs(SCStriangles[i].v1.vec.z) < abs(SCStriangles[i].v1.w)) &&
-//			//vertex v2
-//			(abs(SCStriangles[i].v2.vec.x) < abs(SCStriangles[i].v2.w)) &&
-//			(abs(SCStriangles[i].v2.vec.y) < abs(SCStriangles[i].v2.w)) &&
-//			(abs(SCStriangles[i].v2.vec.z) < abs(SCStriangles[i].v2.w))		)
-//		{
+		if(	(abs(SCStriangles[i].v0.vec.x) <= abs(SCStriangles[i].v0.w)) &&
+			(abs(SCStriangles[i].v0.vec.y) <= abs(SCStriangles[i].v0.w)) &&
+			(abs(SCStriangles[i].v0.vec.z) <= abs(SCStriangles[i].v0.w)) &&
+			//vertex v1
+			(abs(SCStriangles[i].v1.vec.x) <= abs(SCStriangles[i].v1.w)) &&
+			(abs(SCStriangles[i].v1.vec.y) <= abs(SCStriangles[i].v1.w)) &&
+			(abs(SCStriangles[i].v1.vec.z) <= abs(SCStriangles[i].v1.w)) &&
+			//vertex v2
+			(abs(SCStriangles[i].v2.vec.x) <= abs(SCStriangles[i].v2.w)) &&
+			(abs(SCStriangles[i].v2.vec.y) <= abs(SCStriangles[i].v2.w)) &&
+			(abs(SCStriangles[i].v2.vec.z) <= abs(SCStriangles[i].v2.w))		)
+		{
+//			printf("esse aí passou\n");
 			clipped_triangles.push_back(SCStriangles[i]);
 			n_clipped_triangles++;
-//			printf("*********************************CLIPOU*********************************");
-//		}
-//		printf("*********************************CLIPOU*********************************");
+		}
 	}
+//	printf("\nEnd Clipping\n");
 	
 	//Perspective division
+	
 	for(int i = 0; i < n_clipped_triangles; i++) {
-		clipped_triangles[i].v0.vec.x /= clipped_triangles[i].v0.w;
-		clipped_triangles[i].v0.vec.y /= clipped_triangles[i].v0.w;
-		clipped_triangles[i].v0.vec.z /= clipped_triangles[i].v0.w;
+//		printf("\nStarting Persp. Division\n");
+//		clipped_triangles[i].v0.vec.x /= clipped_triangles[i].v0.w;
+//		clipped_triangles[i].v0.vec.y /= clipped_triangles[i].v0.w;
+//		clipped_triangles[i].v0.vec.z /= clipped_triangles[i].v0.w;
+
+		clipped_triangles[i].v0.vec * clipped_triangles[i].v0.w;
 		clipped_triangles[i].v0.w  = 1;
 	
-		clipped_triangles[i].v1.vec.x /= clipped_triangles[i].v1.w;
-		clipped_triangles[i].v1.vec.y /= clipped_triangles[i].v1.w;
-		clipped_triangles[i].v1.vec.z /= clipped_triangles[i].v1.w;
+//		clipped_triangles[i].v1.vec.x /= clipped_triangles[i].v1.w;
+//		clipped_triangles[i].v1.vec.y /= clipped_triangles[i].v1.w;
+//		clipped_triangles[i].v1.vec.z /= clipped_triangles[i].v1.w;
+
+		clipped_triangles[i].v1.vec * clipped_triangles[i].v1.w;
 		clipped_triangles[i].v1.w  = 1;
 		
-		clipped_triangles[i].v2.vec.x /= clipped_triangles[i].v2.w;
-		clipped_triangles[i].v2.vec.y /= clipped_triangles[i].v2.w;
-		clipped_triangles[i].v2.vec.z /= clipped_triangles[i].v2.w;
+//		clipped_triangles[i].v2.vec.x /= clipped_triangles[i].v2.w;
+//		clipped_triangles[i].v2.vec.y /= clipped_triangles[i].v2.w;
+//		clipped_triangles[i].v2.vec.z /= clipped_triangles[i].v2.w;
+
+		clipped_triangles[i].v2.vec * clipped_triangles[i].v2.w;
 		clipped_triangles[i].v2.w  = 1;	
+//		printf("fatiou, passou\n");
 	}
+//	printf("\nEnd Persp. Division\n");
 	
 	//Maps to viewport
 	for(int i = 0; i < n_clipped_triangles; i++) {
+//		printf("\nStarting Map viewport\n");
 		vport.transform(&(clipped_triangles[i].v0));
 		vport.transform(&(clipped_triangles[i].v1));
 		vport.transform(&(clipped_triangles[i].v2));
 	}
-	
+//	printf("\nEnd Map viewport\n");	
 	//Draw
 	//done at display func
 	system("clear");
