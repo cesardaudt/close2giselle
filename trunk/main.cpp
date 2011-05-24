@@ -124,16 +124,6 @@ void displayC2GL() {
 
 void reshape(int w, int h) {
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
-//	//debug
-//    float mat2[4][4];
-//	glGetFloatv(GL_VIEWPORT, (float*)mat2);
-//	printf("OpenGL viewport:\n");
-//	for(int i = 0; i<4; i++) {
-//		for(int j = 0; j<4; j++) {
-//			printf("%f \t", mat2[j][i]);
-//		}
-//		printf("\n");
-//	}
 	glMatrixMode(GL_PROJECTION);
 //	glLoadIdentity();
 //	glOrtho(-5.0, 5.0, -5.0, 5.0, -20.0, 20.0);

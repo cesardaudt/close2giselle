@@ -51,6 +51,7 @@ class close2gl {
 		
 		//debug
 		void printMatrix(matrix4x4f mat);
+		void printVec(vector4f v);
 };
 
 #endif

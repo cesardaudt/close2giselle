@@ -111,10 +111,10 @@ void close2gl::mainLoop() {
 	mproj 	= proj*modview;
 	vport	= viewport();
 
-	printf("\n My modelview matrix\n");
-	printMatrix(modview);
-	printf("\n My Projection matrix\n");
-	printMatrix(proj);
+//	printf("\n My modelview matrix\n");
+//	printMatrix(modview);
+//	printf("\n My Projection matrix\n");
+//	printMatrix(proj);
 
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -156,14 +156,18 @@ void close2gl::mainLoop() {
 	
 	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
-		clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w);
-		clipped_triangles[i].v0.w  = 1;
+		clipped_triangles[i].v0.vec = clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w);
+		clipped_triangles[i].v0.w   = 1;
 
-		clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w);
-		clipped_triangles[i].v1.w  = 1;
+		clipped_triangles[i].v1.vec = clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w);
+		clipped_triangles[i].v1.w   = 1;
 		
-		clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w);
-		clipped_triangles[i].v2.w  = 1;	
+		clipped_triangles[i].v2.vec = clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w);
+		clipped_triangles[i].v2.w   = 1;	
+		
+		printVec(clipped_triangles[i].v0);
+		printVec(clipped_triangles[i].v1);
+		printVec(clipped_triangles[i].v2);
 	}
 	
 	//Maps to viewport
@@ -176,6 +180,10 @@ void close2gl::mainLoop() {
 	//Draw
 	//done at display func
 	system("clear");
+}
+
+void close2gl::printVec(vector4f v) {
+	printf("<%f,%f,%f,%f>\n", v.vec.x, v.vec.y, v.vec.z, v.w);
 }
 
 void close2gl::printMatrix(matrix4x4f mat) {
