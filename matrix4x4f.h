@@ -13,7 +13,7 @@
 
 #define DEGTORAD(degree) ((degree) * (3.141592654f / 180.0f))
 #define RADTODEG(radian) ((radian) * (180.0f / 3.141592654f))
-#define getIndex(i,j)	 (j + 4*i)
+#define getIndex(i,j)	 ((i) + (4*(j)))
 
 class matrix4x4f {
 

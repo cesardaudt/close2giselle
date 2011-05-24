@@ -38,10 +38,10 @@ matrix4x4f close2gl::modelView() {
 //TODO: row of z component with sign inverted
 // hardcoded minus to make it work
 	matrix4x4f m;
-	m.m[0] = cam->u.x; m.m[4] = cam->u.y; m.m[8]  = cam->u.z; m.m[12] = vector3f::dotProduct(-(cam->look_from), cam->u);
-	m.m[1] = cam->v.x; m.m[5] = cam->v.y; m.m[9]  = cam->v.z; m.m[13] = vector3f::dotProduct(-(cam->look_from), cam->v);
-	m.m[2] =-(cam->n.x); m.m[6] =-(cam->n.y); m.m[10] =-(cam->n.z); m.m[14] = -(vector3f::dotProduct(-(cam->look_from), cam->n));
-	m.m[3] = 0       ; m.m[7]= 0        ; m.m[11] = 0       ; m.m[15] = 1;
+	m.m[0] = cam->u.x   ; m.m[4] = cam->u.y   ; m.m[8]  = cam->u.z   ; m.m[12] = vector3f::dotProduct(-(cam->look_from), cam->u);
+	m.m[1] = cam->v.x   ; m.m[5] = cam->v.y   ; m.m[9]  = cam->v.z   ; m.m[13] = vector3f::dotProduct(-(cam->look_from), cam->v);
+	m.m[2] = -(cam->n.x); m.m[6] = -(cam->n.y); m.m[10] = -(cam->n.z); m.m[14] = -(vector3f::dotProduct(-(cam->look_from), cam->n));
+	m.m[3] = 0          ; m.m[7] =  0         ; m.m[11] = 0          ; m.m[15] = 1;
 	return m;
 }
 
@@ -156,13 +156,13 @@ void close2gl::mainLoop() {
 	
 	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
-		clipped_triangles[i].v0.vec = clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w);
+		clipped_triangles[i].v0.vec = (clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w));
 		clipped_triangles[i].v0.w   = 1;
 
-		clipped_triangles[i].v1.vec = clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w);
+		clipped_triangles[i].v1.vec = (clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w));
 		clipped_triangles[i].v1.w   = 1;
 		
-		clipped_triangles[i].v2.vec = clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w);
+		clipped_triangles[i].v2.vec = (clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w));
 		clipped_triangles[i].v2.w   = 1;	
 		
 		printVec(clipped_triangles[i].v0);
