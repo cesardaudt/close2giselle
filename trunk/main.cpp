@@ -46,7 +46,7 @@ void reset() {
 void load() {
 	m1.name = file;
 	m1.readFromFile();
-	Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
+	Close2GL = close2gl(w, h, 0, 0, &cam, &m1);
 }
 
 void display() {
@@ -58,15 +58,15 @@ void display() {
     glColor3fv(&(color.r));
     
 	if(wireframe) {
-		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		polygon = 0; point = 0;
 	}
 	else if(point) {
-		glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 		wireframe = 0; polygon = 0;
 	}
 	else if(polygon) {
-		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		wireframe = 0; point = 0;
 	}
 
@@ -97,18 +97,19 @@ void displayC2GL() {
 		glColor3fv(&(color.r));
 
 		if(wireframe) {
-			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			polygon = 0; point = 0;
 		}
 		else if(point) {
-			glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 			wireframe = 0; polygon = 0;
 		}
 		else if(polygon) {
-			glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			wireframe = 0; point = 0;
 		}
 		for(unsigned int i=0; i<Close2GL.n_clipped_triangles; i++) {
+//			cout<< i <<" garrafa cerveja no muro" << endl;
 			glBegin(GL_TRIANGLES);
 				glVertex2fv(&(Close2GL.clipped_triangles[i].v0.vec.x));
 				glVertex2fv(&(Close2GL.clipped_triangles[i].v1.vec.x));
@@ -116,10 +117,10 @@ void displayC2GL() {
 			glEnd();
 		}
 		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
-		Close2GL.SCStriangles.clear();
-		Close2GL.clipped_triangles.clear();
 	}	
     glutSwapBuffers();
+	Close2GL.SCStriangles.clear();
+	Close2GL.clipped_triangles.clear();
 }
 
 void reshape(int w, int h) {
@@ -368,7 +369,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		Close2GL = close2gl(w, h, 0+w, 0, &cam, &m1);
+		Close2GL = close2gl(w, h, 0, 0, &cam, &m1);
 	}	
 	
 	setGlut();

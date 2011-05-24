@@ -93,7 +93,9 @@ void matrix4x4f::transform(vector4f *v) {
 		  w = v->w;
 //	printf("before:<%f,%f,%f,%f>\n", v->vec.x, v->vec.y, v->vec.z, v->w);
 
+	//3D part
 	transformVector(&(v->vec));
+	//finish him with w coordinate
 	v->vec.x += v->w * m[12];
 	v->vec.y += v->w * m[13];
 	v->vec.z += v->w * m[14];
