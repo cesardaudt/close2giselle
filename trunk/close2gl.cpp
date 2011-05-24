@@ -65,11 +65,6 @@ matrix4x4f close2gl::projection() {
 	n = cam->znear;
 	f = cam->zfar;
 	
-	printf("\nznear:%f fovy:%f\n", cam->znear, cam->fovy);
-	printf("\nwidth:%d height:%d\n", width, height);
-	printf("\naspect:%f", (float)width/(float)height);
-	printf("\nt:%f b:%f r:%f l:%f\n", t,b,r,l);
-	
 	matrix4x4f m;
 	m.m[0] = (2*n)/(r-l); m.m[4] = 0          ; m.m[8]  = (r+l)/(r-l); m.m[12] = 0;
 	m.m[1] = 0          ; m.m[5] = (2*n)/(t-b); m.m[9]  = (t+b)/(t-b); m.m[13] = 0;
@@ -82,7 +77,7 @@ matrix4x4f close2gl::viewport() {
 //⎡ (rv − lv)	0			0	(rv + lv) ⎤
 //⎢	    2							2	  ⎥
 //⎢	  		 (tv − bv)		0	(tv + bv) ⎥
-//⎢	  0			 2					2     ⎥
+//⎢   0			 2					2     ⎥
 //⎢										  ⎥
 //⎢	  0			0			1		0     ⎥
 //⎢										  ⎥
@@ -112,20 +107,9 @@ void close2gl::mainLoop() {
 
 	//Map WCS -> CCS -> SCS		
 	proj 	= projection();
-//	printf("\n My Projection matrix\n");
-//	printMatrix(proj);
-	
 	modview = modelView();
-//	printf("\n My ModelView matrix\n");
-//	printMatrix(modview);
-	
 	mproj 	= proj*modview;
-	printf("\n My ModelViewProj matrix\n");
-	printMatrix(mproj);
-	
 	vport	= viewport();
-	printf("\nViewport matrix\n");
-	printMatrix(vport);
 	
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -141,7 +125,6 @@ void close2gl::mainLoop() {
 	//foreach triangle, if one point doesn't satisfy abs(x), abs(y), abs(z) < abs(w), do not draw it
 	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
-//		printf("\nStarting Clipping\n");
 			//vertex v0
 		if(	(abs(SCStriangles[i].v0.vec.x) <= abs(SCStriangles[i].v0.w)) &&
 			(abs(SCStriangles[i].v0.vec.y) <= abs(SCStriangles[i].v0.w)) &&
@@ -155,12 +138,10 @@ void close2gl::mainLoop() {
 			(abs(SCStriangles[i].v2.vec.y) <= abs(SCStriangles[i].v2.w)) &&
 			(abs(SCStriangles[i].v2.vec.z) <= abs(SCStriangles[i].v2.w))		)
 		{
-//			printf("esse aí passou\n");
 			clipped_triangles.push_back(SCStriangles[i]);
 			n_clipped_triangles++;
 		}
 	}
-//	printf("\nEnd Clipping\n");
 	
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -170,8 +151,6 @@ void close2gl::mainLoop() {
 	
 	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
-//		printf("\nStarting Persp. Division\n");
-
 		clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w);
 		clipped_triangles[i].v0.w  = 1;
 
@@ -180,18 +159,15 @@ void close2gl::mainLoop() {
 		
 		clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w);
 		clipped_triangles[i].v2.w  = 1;	
-//		printf("fatiou, passou\n");
 	}
-//	printf("\nEnd Persp. Division\n");
 	
 	//Maps to viewport
 	for(int i = 0; i < n_clipped_triangles; i++) {
-//		printf("\nStarting Map viewport\n");
 		vport.transform(&(clipped_triangles[i].v0));
 		vport.transform(&(clipped_triangles[i].v1));
 		vport.transform(&(clipped_triangles[i].v2));
 	}
-//	printf("\nEnd Map viewport\n");	
+
 	//Draw
 	//done at display func
 	system("clear");
