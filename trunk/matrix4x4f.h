@@ -36,7 +36,6 @@ class matrix4x4f {
 		void transform(vector4f *v);
 		
 		//operators
-		matrix4x4f operator * (const matrix4x4f &other);
 
 };
 

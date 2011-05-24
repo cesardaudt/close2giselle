@@ -108,21 +108,28 @@ void close2gl::mainLoop() {
 	//Map WCS -> CCS -> SCS		
 	proj 	= projection();
 	modview = modelView();
-	mproj 	= proj*modview;
 	vport	= viewport();
 
-//	printf("\n My modelview matrix\n");
-//	printMatrix(modview);
-//	printf("\n My Projection matrix\n");
-//	printMatrix(proj);
+	printf("\n My modelview matrix\n");
+	printMatrix(modview);
+	printf("\n My Projection matrix\n");
+	printMatrix(proj);
 
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
 		to4d(aux,mesh->triangles[i]);
-		mproj.transform(&(aux.v0));
-		mproj.transform(&(aux.v1));
-		mproj.transform(&(aux.v2));
+		//Pi_m = ModelView * Pi_wcs
+		modview.transform(&(aux.v0));
+		modview.transform(&(aux.v1));
+		modview.transform(&(aux.v2));
+		
+//		getchar();
+		
+		//Pi_scs = Projection * Pi_m
+		proj.transform(&(aux.v0));
+		proj.transform(&(aux.v1));
+		proj.transform(&(aux.v2));
 		SCStriangles.push_back(aux);
 	}
 	
@@ -165,9 +172,9 @@ void close2gl::mainLoop() {
 		clipped_triangles[i].v2.vec = (clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w));
 		clipped_triangles[i].v2.w   = 1;	
 		
-		printVec(clipped_triangles[i].v0);
-		printVec(clipped_triangles[i].v1);
-		printVec(clipped_triangles[i].v2);
+//		printVec(clipped_triangles[i].v0);
+//		printVec(clipped_triangles[i].v1);
+//		printVec(clipped_triangles[i].v2);
 	}
 	
 	//Maps to viewport
