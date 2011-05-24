@@ -110,12 +110,9 @@ void displayC2GL() {
 		}
 		for(unsigned int i=0; i<Close2GL.n_clipped_triangles; i++) {
 			glBegin(GL_TRIANGLES);
-				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[0].x));
-				glVertex3fv(&(Close2GL.clipped_triangles[i].v0.vec.x));
-				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[1].x));
-				glVertex3fv(&(Close2GL.clipped_triangles[i].v1.vec.x));
-				glNormal3fv(&(Close2GL.clipped_triangles[i].normals[2].x));
-				glVertex3fv(&(Close2GL.clipped_triangles[i].v2.vec.x));
+				glVertex2fv(&(Close2GL.clipped_triangles[i].v0.vec.x));
+				glVertex2fv(&(Close2GL.clipped_triangles[i].v1.vec.x));
+				glVertex2fv(&(Close2GL.clipped_triangles[i].v2.vec.x));
 			glEnd();
 		}
 		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;

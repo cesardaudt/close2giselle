@@ -106,15 +106,13 @@ void Camera::set(float max[3], float min[3], int w, int h, vector3f translate, v
 //		}
 //		printf("\n");
 //	}
-	
-	//debug
-    float mat3[4][4];
-	glGetFloatv(GL_VIEWPORT, (float*)mat3);
-	printf("OpenGL viewport:\n");
-	for(int i = 0; i<4; i++) {
-		for(int j = 0; j<4; j++) {
-			printf("%f \t", mat3[j][i]);
-		}
-		printf("\n");
-	}
+//  float mat3[4][4];
+//	glGetFloatv(GL_VIEWPORT, (float*)mat3);
+//	printf("OpenGL viewport:\n");
+//	for(int i = 0; i<4; i++) {
+//		for(int j = 0; j<4; j++) {
+//			printf("%f \t", mat3[j][i]);
+//		}
+//		printf("\n");
+//	}
 }
