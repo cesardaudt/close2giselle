@@ -11,6 +11,10 @@
 
 #include <cmath>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #define DEG_RAD(theta) (theta*M_PI)/180
 #define maxabs(x,y) ((abs(x)>abs(y)) ? (x) : (y))
 

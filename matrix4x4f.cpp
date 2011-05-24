@@ -1,3 +1,6 @@
+//debug
+#include <stdlib.h>
+#include <stdio.h>
 #include "matrix4x4f.h"
 
 matrix4x4f::matrix4x4f() { 
@@ -82,26 +85,20 @@ void matrix4x4f::transformVector(vector3f *vec) {
 
 }
 
-matrix4x4f matrix4x4f::operator * (const matrix4x4f &other) {
-	matrix4x4f result(0,0,0,0,
-					  0,0,0,0,
-					  0,0,0,0,
-					  0,0,0,0);
-	
-	for(unsigned short int i=0; i<4; i++) {
-		for(unsigned short int j=0; j<4; j++) {
-			for(unsigned short int k=0; k<4; k++) {
-				result.m[getIndex(i,j)] += m[getIndex(i,k)] * other.m[getIndex(k,j)];
-			}
-		}
-	}
-	return result;
-}
-
 void matrix4x4f::transform(vector4f *v) {
-	this->transformVector(&(v->vec));
+	//we should save these values because transformVector changes the vector v
+	float x = v->vec.x,
+		  y = v->vec.y,
+		  z = v->vec.z,
+		  w = v->w;
+//	printf("before:<%f,%f,%f,%f>\n", v->vec.x, v->vec.y, v->vec.z, v->w);
+
+	transformVector(&(v->vec));
 	v->vec.x += v->w * m[12];
 	v->vec.y += v->w * m[13];
 	v->vec.z += v->w * m[14];
-	v->w = m[3]*(v->vec.x) + m[7]*(v->vec.y) + m[11]*(v->vec.z) + m[15]*(v->w);
+//	printf("after:<%f,%f,%f,%f>\n", v->vec.x, v->vec.y, v->vec.z, v->w);
+
+	v->w = m[3]*(x) + m[7]*(y) + m[11]*(z) + m[15]*(w);
+//	printf("forgoten w:<%f,%f,%f,%f>\n", v->vec.x, v->vec.y, v->vec.z, v->w);
 }
