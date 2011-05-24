@@ -110,7 +110,12 @@ void close2gl::mainLoop() {
 	modview = modelView();
 	mproj 	= proj*modview;
 	vport	= viewport();
-	
+
+	printf("\n My modelview matrix\n");
+	printMatrix(modview);
+	printf("\n My Projection matrix\n");
+	printMatrix(proj);
+
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
@@ -122,21 +127,21 @@ void close2gl::mainLoop() {
 	}
 	
 	//Clipping
-	//foreach triangle, if one point doesn't satisfy abs(x), abs(y), abs(z) < abs(w), do not draw it
+	//foreach triangle, if one point doesn't satisfy fabs(x), fabs(y), fabs(z) <= fabs(w), do not draw it
 	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
 			//vertex v0
-		if(	(abs(SCStriangles[i].v0.vec.x) <= abs(SCStriangles[i].v0.w)) &&
-			(abs(SCStriangles[i].v0.vec.y) <= abs(SCStriangles[i].v0.w)) &&
-			(abs(SCStriangles[i].v0.vec.z) <= abs(SCStriangles[i].v0.w)) &&
+		if(	(fabs(SCStriangles[i].v0.vec.x) <= fabs(SCStriangles[i].v0.w)) &&
+			(fabs(SCStriangles[i].v0.vec.y) <= fabs(SCStriangles[i].v0.w)) &&
+			(fabs(SCStriangles[i].v0.vec.z) <= fabs(SCStriangles[i].v0.w)) &&
 			//vertex v1
-			(abs(SCStriangles[i].v1.vec.x) <= abs(SCStriangles[i].v1.w)) &&
-			(abs(SCStriangles[i].v1.vec.y) <= abs(SCStriangles[i].v1.w)) &&
-			(abs(SCStriangles[i].v1.vec.z) <= abs(SCStriangles[i].v1.w)) &&
+			(fabs(SCStriangles[i].v1.vec.x) <= fabs(SCStriangles[i].v1.w)) &&
+			(fabs(SCStriangles[i].v1.vec.y) <= fabs(SCStriangles[i].v1.w)) &&
+			(fabs(SCStriangles[i].v1.vec.z) <= fabs(SCStriangles[i].v1.w)) &&
 			//vertex v2
-			(abs(SCStriangles[i].v2.vec.x) <= abs(SCStriangles[i].v2.w)) &&
-			(abs(SCStriangles[i].v2.vec.y) <= abs(SCStriangles[i].v2.w)) &&
-			(abs(SCStriangles[i].v2.vec.z) <= abs(SCStriangles[i].v2.w))		)
+			(fabs(SCStriangles[i].v2.vec.x) <= fabs(SCStriangles[i].v2.w)) &&
+			(fabs(SCStriangles[i].v2.vec.y) <= fabs(SCStriangles[i].v2.w)) &&
+			(fabs(SCStriangles[i].v2.vec.z) <= fabs(SCStriangles[i].v2.w))		)
 		{
 			clipped_triangles.push_back(SCStriangles[i]);
 			n_clipped_triangles++;
