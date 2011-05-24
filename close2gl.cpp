@@ -49,8 +49,8 @@ matrix4x4f close2gl::projection() {
 //⎡  2n               (r + l)        ⎤
 //⎢(r − l )    0      (r − l)    0   ⎥
 //⎢                                  ⎥
-//⎢			  2n      (t + b)        ⎥
-//⎢   0	    (t − b)   (t − b)    0   ⎥
+//⎢           2n      (t + b)        ⎥
+//⎢   0     (t − b)   (t − b)    0   ⎥
 //⎢                                  ⎥
 //⎢                  -(f + n)  -2fn  ⎥
 //⎢   0        0      (f − n) (f − n)⎥
@@ -74,15 +74,15 @@ matrix4x4f close2gl::projection() {
 }
 
 matrix4x4f close2gl::viewport() {
-//⎡ (rv − lv)	0			0	(rv + lv) ⎤
-//⎢	    2							2	  ⎥
-//⎢	  		 (tv − bv)		0	(tv + bv) ⎥
-//⎢   0			 2					2     ⎥
-//⎢										  ⎥
-//⎢	  0			0			1		0     ⎥
-//⎢										  ⎥
-//⎢   0			0			0		1	  ⎥
-//⎣										  ⎦
+//⎡ (rv − lv)    0          0   (rv + lv) ⎤
+//⎢     2                           2     ⎥
+//⎢          (tv − bv)      0   (tv + bv) ⎥
+//⎢   0          2                  2     ⎥
+//⎢                                       ⎥
+//⎢  0          0           1       0     ⎥
+//⎢                                       ⎥
+//⎢   0         0           0       1     ⎥
+//⎣                                       ⎦
 
 	float rv, lv, tv, bv;
 	lv = win_x;
@@ -110,10 +110,10 @@ void close2gl::mainLoop() {
 	modview = modelView();
 	vport	= viewport();
 
-	printf("\n My modelview matrix\n");
-	printMatrix(modview);
-	printf("\n My Projection matrix\n");
-	printMatrix(proj);
+//	printf("\n My modelview matrix\n");
+//	printMatrix(modview);
+//	printf("\n My Projection matrix\n");
+//	printMatrix(proj);
 
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
@@ -157,10 +157,9 @@ void close2gl::mainLoop() {
 	
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		gluOrtho2D(0, width, 0, height);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluOrtho2D(0, width, 0, height);
-	
 	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
 		clipped_triangles[i].v0.vec = (clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w));
@@ -182,6 +181,10 @@ void close2gl::mainLoop() {
 		vport.transform(&(clipped_triangles[i].v0));
 		vport.transform(&(clipped_triangles[i].v1));
 		vport.transform(&(clipped_triangles[i].v2));
+
+//		printVec(clipped_triangles[i].v0);
+//		printVec(clipped_triangles[i].v1);
+//		printVec(clipped_triangles[i].v2);
 	}
 
 	//Draw
