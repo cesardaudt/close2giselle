@@ -93,10 +93,9 @@ void displayC2GL() {
 	
 	if(Close2GL.mesh != NULL) {
 		Close2GL.mainLoop();
-		
+
 		glColor3fv(&(color.r));
-		gluOrtho2D(0, w, 0, h);
-//		glLoadIdentity();
+
 		if(wireframe) {
 			glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 			polygon = 0; point = 0;
