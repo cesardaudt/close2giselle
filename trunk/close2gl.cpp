@@ -162,29 +162,23 @@ void close2gl::mainLoop() {
 	}
 //	printf("\nEnd Clipping\n");
 	
-	//Perspective division
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		gluOrtho2D(0, width, 0, height);
 	
+	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
 //		printf("\nStarting Persp. Division\n");
-//		clipped_triangles[i].v0.vec.x /= clipped_triangles[i].v0.w;
-//		clipped_triangles[i].v0.vec.y /= clipped_triangles[i].v0.w;
-//		clipped_triangles[i].v0.vec.z /= clipped_triangles[i].v0.w;
 
-		clipped_triangles[i].v0.vec * clipped_triangles[i].v0.w;
+		clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w);
 		clipped_triangles[i].v0.w  = 1;
-	
-//		clipped_triangles[i].v1.vec.x /= clipped_triangles[i].v1.w;
-//		clipped_triangles[i].v1.vec.y /= clipped_triangles[i].v1.w;
-//		clipped_triangles[i].v1.vec.z /= clipped_triangles[i].v1.w;
 
-		clipped_triangles[i].v1.vec * clipped_triangles[i].v1.w;
+		clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w);
 		clipped_triangles[i].v1.w  = 1;
 		
-//		clipped_triangles[i].v2.vec.x /= clipped_triangles[i].v2.w;
-//		clipped_triangles[i].v2.vec.y /= clipped_triangles[i].v2.w;
-//		clipped_triangles[i].v2.vec.z /= clipped_triangles[i].v2.w;
-
-		clipped_triangles[i].v2.vec * clipped_triangles[i].v2.w;
+		clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w);
 		clipped_triangles[i].v2.w  = 1;	
 //		printf("fatiou, passou\n");
 	}
