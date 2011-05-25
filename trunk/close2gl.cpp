@@ -1,10 +1,11 @@
 #include "close2gl.h"
 
-close2gl::close2gl(int width, int height, int win_x, int win_y, Camera* cam, Mesh* mesh) {
+close2gl::close2gl(int width, int height, int win_x, int win_y, int* bfculling, Camera* cam, Mesh* mesh) {
 	this->width				  = width;
 	this->height		 	  = height;
 	this->win_x				  = win_x;
 	this->win_y				  = win_y;
+	this->bfculling			  = bfculling;
 	this->n_clipped_triangles = 0;
 	this->cam				  = cam;
 	this->mesh				  = mesh;
@@ -23,6 +24,7 @@ close2gl::close2gl() {
 	win_x = 1;
 	win_y = 1;
 	n_clipped_triangles = 0;
+	bfculling = NULL;
 	cam   = NULL;
 	mesh  = NULL;
 }
@@ -86,9 +88,9 @@ matrix4x4f close2gl::viewport() {
 
 	float rv, lv, tv, bv;
 	lv = win_x;
-	bv = win_y+height;
+	bv = win_y;
 	rv = win_x+width;
-	tv = win_y;
+	tv = win_y+height;
 
 	matrix4x4f m;
 	m.m[0] = (rv-lv)/2	; m.m[4] = 0          ; m.m[8]  = 0 ; m.m[12] = (rv+lv)/2;
@@ -110,11 +112,6 @@ void close2gl::mainLoop() {
 	modview = modelView();
 	vport	= viewport();
 
-//	printf("\n My modelview matrix\n");
-//	printMatrix(modview);
-//	printf("\n My Projection matrix\n");
-//	printMatrix(proj);
-
 	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
@@ -123,9 +120,7 @@ void close2gl::mainLoop() {
 		modview.transform(&(aux.v0));
 		modview.transform(&(aux.v1));
 		modview.transform(&(aux.v2));
-		
-//		getchar();
-		
+				
 		//Pi_scs = Projection * Pi_m
 		proj.transform(&(aux.v0));
 		proj.transform(&(aux.v1));
@@ -160,6 +155,22 @@ void close2gl::mainLoop() {
 		gluOrtho2D(0, width, 0, height);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+		
+	//Backface culling
+	if(*bfculling != 0) {
+//		int cull=0;
+		for(int i = 0; i < n_clipped_triangles; i++) {
+			//if polygon.normal (dot) cam.n < 0, visible
+			if( -(vector3f::dotProduct(clipped_triangles[i].t_normal, cam->n)) >= 0) {
+//			if(-(vector3f::dotProduct(returnNormal(clipped_triangles[i]), cam->n)) >= 0) {
+				clipped_triangles.erase(clipped_triangles.begin()+i);
+				n_clipped_triangles--;
+			}
+		}
+		//refresh number of triangles (subtract number of "backface-culled" ones)	
+//		n_clipped_triangles -= cull;	
+	}
+	
 	//Perspective division	
 	for(int i = 0; i < n_clipped_triangles; i++) {
 		clipped_triangles[i].v0.vec = (clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w));
@@ -170,10 +181,6 @@ void close2gl::mainLoop() {
 		
 		clipped_triangles[i].v2.vec = (clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w));
 		clipped_triangles[i].v2.w   = 1;	
-		
-//		printVec(clipped_triangles[i].v0);
-//		printVec(clipped_triangles[i].v1);
-//		printVec(clipped_triangles[i].v2);
 	}
 	
 	//Maps to viewport
@@ -181,10 +188,6 @@ void close2gl::mainLoop() {
 		vport.transform(&(clipped_triangles[i].v0));
 		vport.transform(&(clipped_triangles[i].v1));
 		vport.transform(&(clipped_triangles[i].v2));
-
-//		printVec(clipped_triangles[i].v0);
-//		printVec(clipped_triangles[i].v1);
-//		printVec(clipped_triangles[i].v2);
 	}
 
 	//Draw

@@ -46,7 +46,7 @@ void reset() {
 void load() {
 	m1.name = file;
 	m1.readFromFile();
-	Close2GL = close2gl(w, h, 0, 0, &cam, &m1);
+	Close2GL = close2gl(w, h, 0, 0, &bfculling, &cam, &m1);
 }
 
 void display() {
@@ -369,7 +369,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		Close2GL = close2gl(w, h, 0, 0, &cam, &m1);
+		Close2GL = close2gl(w, h, 0, 0, &bfculling, &cam, &m1);
 	}	
 	
 	setGlut();
