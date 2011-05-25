@@ -17,6 +17,8 @@
 							tri4d.t_normal	= tri3d.t_normal; \
 							tri4d.color		= tri3d.color
 
+#define returnNormal(tri)	((vector3f::crossProduct(vector3f(tri.v1.vec - tri.v0.vec), vector3f(tri.v2.vec - tri.v0.vec))))
+
 class close2gl {
 	public:
 		//atributes
@@ -25,13 +27,14 @@ class close2gl {
 		int				win_x;
 		int				win_y;
 		int				n_clipped_triangles;
+		int*			bfculling;			//pointer to global var bfculling
 		Camera*			cam;
 		Mesh* 			mesh;
 		vector<HomTri>	SCStriangles;
 		vector<HomTri>	clipped_triangles;
 		//constructors & destructors
 		close2gl();
-		close2gl(int width, int height, int win_x, int win_y, Camera* cam, Mesh* mesh);
+		close2gl(int width, int height, int win_x, int win_y, int* bfculling, Camera* cam, Mesh* mesh);
 		~close2gl();
 		
 		//methods
