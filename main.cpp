@@ -109,7 +109,6 @@ void displayC2GL() {
 			wireframe = 0; point = 0;
 		}
 		for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
-//			cout<< i <<" garrafa cerveja no muro" << endl;
 			if(Close2GL.triangles[i].draw == true) {
 				glBegin(GL_TRIANGLES);
 					glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
@@ -118,11 +117,8 @@ void displayC2GL() {
 				glEnd();
 			}
 		}
-//		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
 	}	
     glutSwapBuffers();
-//	Close2GL.SCStriangles.clear();
-//	Close2GL.clipped_triangles.clear();
 	Close2GL.triangles.clear();
 }
 
@@ -266,6 +262,9 @@ void setGlui() {
 	segment_spinner8->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
 	GLUI_Spinner *segment_spinner12 = glui->add_spinner_to_panel (obj_panel3, "fov y:", GLUI_SPINNER_FLOAT, &(cam.fovy));
 	segment_spinner12->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
+	GLUI_Spinner *segment_spinner13 = glui->add_spinner_to_panel (obj_panel3, "fov x:", GLUI_SPINNER_FLOAT, &(cam.fovx));
+	segment_spinner13->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
+	
 	glui->add_checkbox_to_panel(obj_panel3, "Points", &point, NULL);	
 	glui->add_checkbox_to_panel(obj_panel3, "Wireframe", &wireframe, NULL);
 	glui->add_checkbox_to_panel(obj_panel3, "Polygons", &polygon, NULL);
