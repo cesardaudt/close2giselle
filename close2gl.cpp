@@ -45,6 +45,7 @@ matrix4x4f close2gl::modelView() {
 	m.m[2] = -(cam->n.x); m.m[6] = -(cam->n.y); m.m[10] = -(cam->n.z); m.m[14] = -(vector3f::dotProduct(-(cam->look_from), cam->n));
 	m.m[3] = 0          ; m.m[7] =  0         ; m.m[11] = 0          ; m.m[15] = 1;
 	return m;
+	
 }
 
 matrix4x4f close2gl::projection() {
@@ -125,28 +126,26 @@ void close2gl::mainLoop() {
 		proj.transform(&(aux.v0));
 		proj.transform(&(aux.v1));
 		proj.transform(&(aux.v2));
-		SCStriangles.push_back(aux);
+		triangles.push_back(aux);
 	}
 	
 	//Clipping
 	//foreach triangle, if one point doesn't satisfy fabs(x), fabs(y), fabs(z) <= fabs(w), do not draw it
-	n_clipped_triangles = 0;
 	for(int i=0; i<mesh->n_triangles; i++) {
-			//vertex v0
-		if(	(fabs(SCStriangles[i].v0.vec.x) <= fabs(SCStriangles[i].v0.w)) &&
-			(fabs(SCStriangles[i].v0.vec.y) <= fabs(SCStriangles[i].v0.w)) &&
-			(fabs(SCStriangles[i].v0.vec.z) <= fabs(SCStriangles[i].v0.w)) &&
-			//vertex v1
-			(fabs(SCStriangles[i].v1.vec.x) <= fabs(SCStriangles[i].v1.w)) &&
-			(fabs(SCStriangles[i].v1.vec.y) <= fabs(SCStriangles[i].v1.w)) &&
-			(fabs(SCStriangles[i].v1.vec.z) <= fabs(SCStriangles[i].v1.w)) &&
-			//vertex v2
-			(fabs(SCStriangles[i].v2.vec.x) <= fabs(SCStriangles[i].v2.w)) &&
-			(fabs(SCStriangles[i].v2.vec.y) <= fabs(SCStriangles[i].v2.w)) &&
-			(fabs(SCStriangles[i].v2.vec.z) <= fabs(SCStriangles[i].v2.w))		)
+			 //vertex v0
+		if(!((fabs(triangles[i].v0.vec.x) <= fabs(triangles[i].v0.w)) &&
+			 (fabs(triangles[i].v0.vec.y) <= fabs(triangles[i].v0.w)) &&
+			 (fabs(triangles[i].v0.vec.z) <= fabs(triangles[i].v0.w)) &&
+			 //vertex v1
+			 (fabs(triangles[i].v1.vec.x) <= fabs(triangles[i].v1.w)) &&
+			 (fabs(triangles[i].v1.vec.y) <= fabs(triangles[i].v1.w)) &&
+			 (fabs(triangles[i].v1.vec.z) <= fabs(triangles[i].v1.w)) &&
+			 //vertex v2
+			 (fabs(triangles[i].v2.vec.x) <= fabs(triangles[i].v2.w)) &&
+			 (fabs(triangles[i].v2.vec.y) <= fabs(triangles[i].v2.w)) &&
+			 (fabs(triangles[i].v2.vec.z) <= fabs(triangles[i].v2.w))	))
 		{
-			clipped_triangles.push_back(SCStriangles[i]);
-			n_clipped_triangles++;
+			triangles[i].draw = false;
 		}
 	}
 	
@@ -158,36 +157,42 @@ void close2gl::mainLoop() {
 		
 	//Backface culling
 	if(*bfculling != 0) {
-//		int cull=0;
-		for(int i = 0; i < n_clipped_triangles; i++) {
-			//if polygon.normal (dot) cam.n < 0, visible
-			if( -(vector3f::dotProduct(clipped_triangles[i].t_normal, cam->n)) >= 0) {
-//			if(-(vector3f::dotProduct(returnNormal(clipped_triangles[i]), cam->n)) >= 0) {
-				clipped_triangles.erase(clipped_triangles.begin()+i);
-				n_clipped_triangles--;
+		for(int i = 0; i < mesh->n_triangles; i++) {
+			//if the triangle passed the clipping stage, we should perform culling
+			if(triangles[i].draw == true){
+				triangles[i].t_normal = 
+					vector3f::crossProduct(triangles[i].v0.vec - triangles[i].v1.vec,
+										   triangles[i].v0.vec - triangles[i].v2.vec);
+								
+				if( -(vector3f::dotProduct(triangles[i].t_normal, cam->n)) >= 0) {
+					triangles[i].draw = false;
+				}
 			}
 		}
-		//refresh number of triangles (subtract number of "backface-culled" ones)	
-//		n_clipped_triangles -= cull;	
 	}
 	
 	//Perspective division	
-	for(int i = 0; i < n_clipped_triangles; i++) {
-		clipped_triangles[i].v0.vec = (clipped_triangles[i].v0.vec * (1.0f / clipped_triangles[i].v0.w));
-		clipped_triangles[i].v0.w   = 1;
-
-		clipped_triangles[i].v1.vec = (clipped_triangles[i].v1.vec * (1.0f / clipped_triangles[i].v1.w));
-		clipped_triangles[i].v1.w   = 1;
-		
-		clipped_triangles[i].v2.vec = (clipped_triangles[i].v2.vec * (1.0f / clipped_triangles[i].v2.w));
-		clipped_triangles[i].v2.w   = 1;	
+	for(int i = 0; i < mesh->n_triangles; i++) {
+		if (triangles[i].draw == true) {
+			//v0
+			triangles[i].v0.vec = (triangles[i].v0.vec * (1.0f / triangles[i].v0.w));
+			triangles[i].v0.w   = 1;
+			//v1
+			triangles[i].v1.vec = (triangles[i].v1.vec * (1.0f / triangles[i].v1.w));
+			triangles[i].v1.w   = 1;
+			//v2
+			triangles[i].v2.vec = (triangles[i].v2.vec * (1.0f / triangles[i].v2.w));
+			triangles[i].v2.w   = 1;	
+		}
 	}
 	
 	//Maps to viewport
-	for(int i = 0; i < n_clipped_triangles; i++) {
-		vport.transform(&(clipped_triangles[i].v0));
-		vport.transform(&(clipped_triangles[i].v1));
-		vport.transform(&(clipped_triangles[i].v2));
+	for(int i = 0; i < mesh->n_triangles; i++) {
+		if (triangles[i].draw == true) {
+			vport.transform(&(triangles[i].v0));
+			vport.transform(&(triangles[i].v1));
+			vport.transform(&(triangles[i].v2));
+		}
 	}
 
 	//Draw

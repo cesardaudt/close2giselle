@@ -11,7 +11,7 @@
 #define WINS 			2
 #define OPENGL_WIN 		0
 #define CLOSE2GL_WIN 	1
-#define INC				6.5
+#define INC				3
 
 int wins[WINS];
 int w = WIDTH;
@@ -22,7 +22,7 @@ close2gl Close2GL;
 Camera cam;
 Mesh m1;
 
-vector3f translate(0.0, 0.0, 0.0);
+vector3f translate;
 vector3f rotation;
 Color color = {1.0, 0, 0};
 int lookat = 0;
@@ -108,19 +108,22 @@ void displayC2GL() {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			wireframe = 0; point = 0;
 		}
-		for(unsigned int i=0; i<Close2GL.n_clipped_triangles; i++) {
+		for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
 //			cout<< i <<" garrafa cerveja no muro" << endl;
-			glBegin(GL_TRIANGLES);
-				glVertex2fv(&(Close2GL.clipped_triangles[i].v0.vec.x));
-				glVertex2fv(&(Close2GL.clipped_triangles[i].v1.vec.x));
-				glVertex2fv(&(Close2GL.clipped_triangles[i].v2.vec.x));
-			glEnd();
+			if(Close2GL.triangles[i].draw == true) {
+				glBegin(GL_TRIANGLES);
+					glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
+					glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
+					glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
+				glEnd();
+			}
 		}
-		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
+//		cout << "Drawn " << Close2GL.n_clipped_triangles << " triangles" << endl;
 	}	
     glutSwapBuffers();
-	Close2GL.SCStriangles.clear();
-	Close2GL.clipped_triangles.clear();
+//	Close2GL.SCStriangles.clear();
+//	Close2GL.clipped_triangles.clear();
+	Close2GL.triangles.clear();
 }
 
 void reshape(int w, int h) {
