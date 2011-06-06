@@ -29,6 +29,7 @@ typedef struct triangle_4d {
 	vector3f normals[3];
 	vector3f t_normal;
 	Color color;
+	bool draw;
 } HomTri;
 
 class Mesh {
