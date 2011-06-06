@@ -31,8 +31,6 @@ class close2gl {
 		int*			bfculling;			//pointer to global var bfculling
 		Camera*			cam;
 		Mesh* 			mesh;
-//		vector<HomTri>	SCStriangles;
-//		vector<HomTri>	clipped_triangles;
 		vector<HomTri>  triangles;
 		//constructors & destructors
 		close2gl();
