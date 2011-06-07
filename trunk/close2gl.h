@@ -29,12 +29,13 @@ class close2gl {
 		int				win_y;
 		int				n_clipped_triangles;
 		int*			bfculling;			//pointer to global var bfculling
+		int*			vertex_orientation;
 		Camera*			cam;
 		Mesh* 			mesh;
 		vector<HomTri>  triangles;
 		//constructors & destructors
 		close2gl();
-		close2gl(int width, int height, int win_x, int win_y, int* bfculling, Camera* cam, Mesh* mesh);
+		close2gl(int width, int height, int win_x, int win_y, int* bfculling, int* vertex_orientation, Camera* cam, Mesh* mesh);
 		~close2gl();
 		
 		//methods

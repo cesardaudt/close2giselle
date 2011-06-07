@@ -6,7 +6,7 @@
 #include <GL/glut.h>
 #include <GL/glui.h>
 
-#define WIDTH			640
+#define WIDTH			600
 #define HEIGHT			480
 #define WINS 			2
 #define OPENGL_WIN 		0
@@ -46,7 +46,7 @@ void reset() {
 void load() {
 	m1.name = file;
 	m1.readFromFile();
-	Close2GL = close2gl(w, h, 0, 0, &bfculling, &cam, &m1);
+	Close2GL = close2gl(w, h, 0, 0, &bfculling, &vertex_orientation, &cam, &m1);
 }
 
 void display() {
@@ -54,6 +54,24 @@ void display() {
     setGl();
     
     cam.set(m1.max, m1.min, w, h, translate, rotation, lookat);
+    
+//	//debug: camera axis
+//	glLineWidth(2.0f);
+//	glBegin(GL_LINES);
+//		glColor3f(1.0f, 0.0f, 0.0f);	//red
+//		glVertex3f(0.0f, 0.0f, 0.0f);//u axis
+//		glVertex3f(10.0*cam.u.x, 10.0*cam.u.y, 10.0*cam.u.z);//
+
+//		glColor3f(0.0f, 1.0f, 0.0f);	//green
+//		glVertex3f(0.0f, 0.0f, 0.0f);//v axis
+//		glVertex3f(10.0*cam.v.x, 10.0*cam.v.y, 10.0*cam.v.z);//
+
+//		glColor3f(0.0f, 0.0f, 1.0f);	//blue
+//		glVertex3f(0.0f, 0.0f, 0.0f);//n axis
+//		glVertex3f(10.0*cam.n.x, 10.0*cam.n.y, 10.0*cam.n.z);//
+//	glEnd();
+//	
+//	glLineWidth(1.0f);
     	
     glColor3fv(&(color.r));
     
@@ -80,6 +98,7 @@ void display() {
 			glVertex3fv(&(m1.triangles[i].v2.x));
 		glEnd();
 	}
+	
     glutSwapBuffers();
     GLUI_Master.sync_live_all();
 }
@@ -108,15 +127,28 @@ void displayC2GL() {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			wireframe = 0; point = 0;
 		}
-		for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
-			if(Close2GL.triangles[i].draw == true) {
-				glBegin(GL_TRIANGLES);
-					glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
-					glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
-					glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
-				glEnd();
+		if(vertex_orientation) {
+			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
+				if(Close2GL.triangles[i].draw == true) {
+					glBegin(GL_TRIANGLES);					
+						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
+						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
+						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
+					glEnd();
+				}
 			}
 		}
+		else {
+			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
+				if(Close2GL.triangles[i].draw == true) {
+					glBegin(GL_TRIANGLES);					
+						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
+						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
+						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
+					glEnd();
+				}
+			}
+		}		
 	}	
     glutSwapBuffers();
 	Close2GL.triangles.clear();
@@ -371,7 +403,7 @@ int main(int argc, char** argv) {
 	if(argc == 2) {
 		m1.name = argv[1];
 		m1.readFromFile();
-		Close2GL = close2gl(w, h, 0, 0, &bfculling, &cam, &m1);
+		Close2GL = close2gl(w, h, 0, 0, &bfculling, &vertex_orientation, &cam, &m1);
 	}	
 	
 	setGlut();

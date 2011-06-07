@@ -40,7 +40,8 @@ void Camera::set(float max[3], float min[3], int w, int h, vector3f translate, v
 
 
 	//the camera should be placed at the biggest distance + max_value in z
-	look_from.z = maxabs(hx,hy)+max[2];
+//	look_from.z = maxabs(hx,hy)+max[2];
+	look_from.z = maxabs(hx,hy);
 	look_at.z = -look_from.z;	
 	//
 	

@@ -1,11 +1,12 @@
 #include "close2gl.h"
 
-close2gl::close2gl(int width, int height, int win_x, int win_y, int* bfculling, Camera* cam, Mesh* mesh) {
+close2gl::close2gl(int width, int height, int win_x, int win_y, int* bfculling, int* vertex_orientation, Camera* cam, Mesh* mesh) {
 	this->width				  = width;
 	this->height		 	  = height;
 	this->win_x				  = win_x;
 	this->win_y				  = win_y;
 	this->bfculling			  = bfculling;
+	this->vertex_orientation  = vertex_orientation;
 	this->n_clipped_triangles = 0;
 	this->cam				  = cam;
 	this->mesh				  = mesh;
@@ -42,7 +43,7 @@ matrix4x4f close2gl::modelView() {
 	matrix4x4f m;
 	m.m[0] = cam->u.x   ; m.m[4] = cam->u.y   ; m.m[8]  = cam->u.z   ; m.m[12] = vector3f::dotProduct(-(cam->look_from), cam->u);
 	m.m[1] = cam->v.x   ; m.m[5] = cam->v.y   ; m.m[9]  = cam->v.z   ; m.m[13] = vector3f::dotProduct(-(cam->look_from), cam->v);
-	m.m[2] = -(cam->n.x); m.m[6] = -(cam->n.y); m.m[10] = -(cam->n.z); m.m[14] = -(vector3f::dotProduct(-(cam->look_from), cam->n));
+	m.m[2] = -(cam->n.x); m.m[6] = -(cam->n.y); m.m[10] = -(cam->n.z); m.m[14] =(vector3f::dotProduct(-(cam->look_from), -(cam->n)));
 	m.m[3] = 0          ; m.m[7] =  0         ; m.m[11] = 0          ; m.m[15] = 1;
 	return m;
 	
@@ -113,7 +114,6 @@ void close2gl::mainLoop() {
 	modview = modelView();
 	vport	= viewport();
 
-	//SCStriangles.reserve(mesh->n_triangles);
 	//foreach triangle, do Pi_scs = Projection * Modelview * Pi_wcs
 	for(int i=0; i<mesh->n_triangles; i++) {
 		to4d(aux,mesh->triangles[i]);
@@ -149,23 +149,35 @@ void close2gl::mainLoop() {
 		}
 	}
 	
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluOrtho2D(0, width, 0, height);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, width, 0, height);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 		
 	//Backface culling
 	if(*bfculling != 0) {
+	float dot_result;
 		for(int i = 0; i < mesh->n_triangles; i++) {
 			//if the triangle passed the clipping stage, we should perform culling
 			if(triangles[i].draw == true){
 				triangles[i].t_normal = 
 					vector3f::crossProduct(triangles[i].v0.vec - triangles[i].v1.vec,
 										   triangles[i].v0.vec - triangles[i].v2.vec);
-								
-				if( -(vector3f::dotProduct(triangles[i].t_normal, cam->n)) >= 0) {
-					triangles[i].draw = false;
+				
+				dot_result = vector3f::dotProduct(triangles[i].t_normal, cam->n);
+				
+				//CW case			
+				if(*vertex_orientation != 0) {
+					if(dot_result < 0) {
+						triangles[i].draw = false;
+					}
+				}
+				//CCW case
+				else {
+					if(dot_result >= 0) {
+						triangles[i].draw = false;
+					}
 				}
 			}
 		}
@@ -197,6 +209,16 @@ void close2gl::mainLoop() {
 
 	//Draw
 	//done at display func
+	
+	//debbug
+	cout << "Camera vectors" << endl;
+	cout << "u: <" << cam->u.x << ", " << cam->u.y << ", " << cam->u.z << ">" << endl;
+	cout << "v: <" << cam->v.x << ", " << cam->v.y << ", " << cam->v.z << ">" << endl;
+	cout << "n: <" << cam->n.x << ", " << cam->n.y << ", " << cam->n.z << ">" << endl;
+	
+	cout << "Camera position" << endl;
+	cout << "Oc: <" << cam->look_from.x << ", " << cam->look_from.y << ", " << cam->look_from.z << ">" << endl;
+
 	system("clear");
 }
 
