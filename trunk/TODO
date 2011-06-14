@@ -1,0 +1,13 @@
+a) Rasterização dos triângulos projetados:
+	- Interpolação dos atributos de cada vértice
+b) Modelo de iluminação de Phong
+c) FLAT e GOURAUD shading. Renderização com pontos e aramada
+d) Mudança interativa dos coeficientes Especular, Difurso e Ambiental da superfície e da cor da fonte de luz
+e) Resolver visibilidade com Z-buffering
+f) Interpolação perspectivamente correta e mapeamento de texturas
+g) Nearest neighbors, bilinear re-sampling, mip-mapping
+h) Redimensionamento da janela da Close2GL
+
+CORREÇÃO DA VERSÃO ANTERIOR
+
+-> Backface culling
