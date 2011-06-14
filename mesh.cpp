@@ -3,8 +3,8 @@
 Mesh::Mesh() {
 	name = string("");
 	n_triangles = 0;
-	max[0] = max[1] = max[2] = -99999;
-	min[0] = min[1] = min[2] =  99999;
+	max[X] = max[Y] = max[Z] = -99999;
+	min[X] = min[Y] = min[Z] =  99999;
 }
 
 Mesh::Mesh(string name) {
@@ -21,6 +21,10 @@ void Mesh::readFromFile() {
 	vector<Color> diffuse;
 	vector<Color> specular;
 	vector<float> material_shine;
+
+	//reset max and min values	
+	max[X] = max[Y] = max[Z] = -99999;
+	min[X] = min[Y] = min[Z] =  99999;
 	
 	char ch;
 	int i, material_count, color_index[3];

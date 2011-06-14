@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 #define to4d(tri4d, tri3d)  tri4d.v0.vec	= tri3d.v0; tri4d.v0.w = 1; \
 							tri4d.v1.vec	= tri3d.v1; tri4d.v1.w = 1; \
 							tri4d.v2.vec	= tri3d.v2; tri4d.v2.w = 1; \

@@ -11,3 +11,6 @@ h) Redimensionamento da janela da Close2GL
 CORREÇÃO DA VERSÃO ANTERIOR
 
 -> Backface culling
+-> CW/CCW rendering
+-> Posicionamento da camera (funcionar para os 2 modelos)	-DONE
+-> Sincronização do cálculo dos fov

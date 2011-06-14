@@ -1,11 +1,3 @@
-//-----------------------------------------------------------------------------
-//           Name: matrix4x4f.h
-//         Author: Kevin Harris
-//  Last Modified: March 13, 2005 by Manuel Menezes
-//    Description: OpenGL compatible utility class for a 4x4 matrix of floats.
-//                 NOTE: This class has been left unoptimized for readability.
-//-----------------------------------------------------------------------------
-
 #ifndef _MATRIX4X4F_H_
 #define _MATRIX4X4F_H_
 
@@ -39,4 +31,4 @@ class matrix4x4f {
 
 };
 
-#endif // _MATRIX4X4F_H_
+#endif

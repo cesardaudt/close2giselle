@@ -9,6 +9,10 @@
 #include <GL/glui.h>
 #include <GL/glut.h>
 
+#define X 0
+#define Y 1
+#define Z 2
+
 class Camera {
 	public:
 		//atributes

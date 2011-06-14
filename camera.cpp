@@ -22,28 +22,27 @@ Camera::~Camera() {}
 void Camera::set(float max[3], float min[3], int w, int h, vector3f translate, vector3f rotation, int lookat) {
 	float hy=0, hx=0, ph=0;
 
-	look_from.x = look_at.x = (max[0] + min[0])/2; 
-	look_from.y = look_at.y = (max[1] + min[1])/2;
+	look_from.x = look_at.x = (max[X] + min[X])/2; 
+	look_from.y = look_at.y = (max[Y] + min[Y])/2;
 	
 	//TODO: Should work if fovy xor fovx is given
+	
 	//hy is the distance in z that the camera should be placed
-	hy = ((max[1] - min[1])/2)/tan(DEG_RAD(fovy/2.0));
+	hy = ((max[Y] - min[Y])/2) / tan(DEG_RAD(fovy/2.0));
 
 	//ph is the height of pyramide with the projection plane as base
 	//and the center of projection as top.
-	ph = (h/2)/tan(DEG_RAD(fovy/2));
+	ph = (h/2) / tan(DEG_RAD(fovy/2));
 	
 	//with ph value, we can calculate fovx angle
 	fovx = atan((w/2)/ph) * 2.0;
 	//hx is the distance in z that the camera should be placed
-	hx = ((max[0] - min[0])/2)/tan(fovx/2.0);
+	hx = ((max[X] - min[X])/2) / tan(fovx/2.0);
 
+	//the camera should be placed at the biggest distance + abs(max_value in z)
+	look_from.z = maxabs(hx,hy) + fabs(max[Z]);
 
-	//the camera should be placed at the biggest distance + max_value in z
-//	look_from.z = maxabs(hx,hy)+max[2];
-	look_from.z = maxabs(hx,hy);
-	look_at.z = -look_from.z;	
-	//
+	look_at.z = -look_from.z;
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
