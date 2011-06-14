@@ -13,6 +13,8 @@
 #define CLOSE2GL_WIN 	1
 #define INC				3
 
+using namespace std;
+
 int wins[WINS];
 int w = WIDTH;
 int h = HEIGHT;
@@ -101,6 +103,17 @@ void display() {
 	
     glutSwapBuffers();
     GLUI_Master.sync_live_all();
+    
+    //debug
+    cout << "Camera Position: (" << cam.look_from.x << ", " << cam.look_from.y 	<< ", " << cam.look_from.z 	<< ")" << endl;
+    cout << "Camera u: <" 		 << cam.u.x 		<< ", " << cam.u.y 			<< ", " << cam.u.z 			<< ">" << endl;
+    cout << "Camera v: <" 		 << cam.v.x 		<< ", " << cam.v.y 			<< ", " << cam.v.z 			<< ">" << endl;
+    cout << "Camera n: <" 		 << cam.n.x 		<< ", " << cam.n.y 			<< ", " << cam.n.z 			<< ">" << endl;
+    
+    cout << "Mesh name:" << m1.name << endl;
+    cout << "File name:" << file << endl;
+    
+    system("clear");   
 }
 
 void displayC2GL() {

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-typedef struct rgb_col {
+typedef struct rgb_color {
 	float r, g, b;
 } Color;
 

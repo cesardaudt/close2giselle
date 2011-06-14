@@ -1,11 +1,3 @@
-//-----------------------------------------------------------------------------
-//           Name: vector3f.h
-//         Author: Kevin Harris
-//  Last Modified: 02/01/05
-//    Description: OpenGL compatible utility class for a 3D vector of floats
-//                 NOTE: This class has been left unoptimized for readability.
-//-----------------------------------------------------------------------------
-
 #ifndef _VECTOR3F_H_
 #define _VECTOR3F_H_
 
@@ -61,4 +53,4 @@ typedef struct vec4d {
 	float	 w;
 } vector4f;
 
-#endif // _VECTOR3F_H_
+#endif
