@@ -6,7 +6,7 @@
 #include <GL/glut.h>
 #include <GL/glui.h>
 
-#define WIDTH			600
+#define WIDTH			640
 #define HEIGHT			480
 #define WINS 			2
 #define OPENGL_WIN 		0
@@ -111,42 +111,68 @@ void displayC2GL() {
 		glColor3fv(&(color.r));
 
 		if(wireframe) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			polygon = 0; point = 0;
-		}
-		else if(point) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-			wireframe = 0; polygon = 0;
-		}
-		else if(polygon) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			wireframe = 0; point = 0;
-		}
-		if(vertex_orientation) {
+			//foreach pixel of each triangle call bresenham's line algorithm
 			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
 				if(Close2GL.triangles[i].draw == true) {
-					glBegin(GL_TRIANGLES);					
-						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
-						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
-						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
-					glEnd();
+					//v0
+					Close2GL.bresenhamLine(int(Close2GL.triangles[i].v0.vec.x), int(Close2GL.triangles[i].v0.vec.y), 
+										   int(Close2GL.triangles[i].v1.vec.x), int(Close2GL.triangles[i].v1.vec.y));
+					
+					//v1
+					Close2GL.bresenhamLine(int(Close2GL.triangles[i].v1.vec.x), int(Close2GL.triangles[i].v1.vec.y),
+										   int(Close2GL.triangles[i].v2.vec.x), int(Close2GL.triangles[i].v2.vec.y));
+
+					//v2
+					Close2GL.bresenhamLine(int(Close2GL.triangles[i].v2.vec.x), int(Close2GL.triangles[i].v2.vec.y),
+										   int(Close2GL.triangles[i].v0.vec.x), int(Close2GL.triangles[i].v0.vec.y));
 				}
 			}
+//			Close2GL.bresenhamLine(0,600,0,479);
+			//draw framebuffer
+//			glClear(GL_COLOR_BUFFER_BIT); 
+			glRasterPos2i(0,0); 
+			glDrawPixels(Close2GL.width, Close2GL.height, GL_RGB, GL_UNSIGNED_BYTE, Close2GL.framebuffer); 
 		}
-		else {
-			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
-				if(Close2GL.triangles[i].draw == true) {
-					glBegin(GL_TRIANGLES);					
-						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
-						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
-						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
-					glEnd();
-				}
-			}
-		}		
+		
+		
+//		else if(point) {
+//			wireframe = 0; polygon = 0;
+//			//draw framebuffer
+//		}
+//		else if(polygon) {
+//			wireframe = 0; point = 0;
+//			//call barycenter coordinates' algorithm
+//			//draw framebuffer
+//		}
+		
+		
+//		if(vertex_orientation) {
+//			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
+//				if(Close2GL.triangles[i].draw == true) {
+//					glBegin(GL_TRIANGLES);					
+//						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
+//						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
+//						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
+//					glEnd();
+//				}
+//			}
+//		}
+//		else {
+//			for(unsigned int i=0; i<Close2GL.mesh->n_triangles; i++) {
+//				if(Close2GL.triangles[i].draw == true) {
+//					glBegin(GL_TRIANGLES);					
+//						glVertex2fv(&(Close2GL.triangles[i].v0.vec.x));
+//						glVertex2fv(&(Close2GL.triangles[i].v2.vec.x));
+//						glVertex2fv(&(Close2GL.triangles[i].v1.vec.x));
+//					glEnd();
+//				}
+//			}
+//		}		
 	}	
     glutSwapBuffers();
 	Close2GL.triangles.clear();
+	memset(Close2GL.framebuffer, 0, CHANNELS * Close2GL.width * Close2GL.height);
 }
 
 void reshape(int w, int h) {
