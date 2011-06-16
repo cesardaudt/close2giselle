@@ -56,24 +56,6 @@ void display() {
     setGl();
     
     cam.set(m1.max, m1.min, w, h, translate, rotation, lookat);
-    
-//	//debug: camera axis
-//	glLineWidth(2.0f);
-//	glBegin(GL_LINES);
-//		glColor3f(1.0f, 0.0f, 0.0f);	//red
-//		glVertex3f(0.0f, 0.0f, 0.0f);//u axis
-//		glVertex3f(10.0*cam.u.x, 10.0*cam.u.y, 10.0*cam.u.z);//
-
-//		glColor3f(0.0f, 1.0f, 0.0f);	//green
-//		glVertex3f(0.0f, 0.0f, 0.0f);//v axis
-//		glVertex3f(10.0*cam.v.x, 10.0*cam.v.y, 10.0*cam.v.z);//
-
-//		glColor3f(0.0f, 0.0f, 1.0f);	//blue
-//		glVertex3f(0.0f, 0.0f, 0.0f);//n axis
-//		glVertex3f(10.0*cam.n.x, 10.0*cam.n.y, 10.0*cam.n.z);//
-//	glEnd();
-//	
-//	glLineWidth(1.0f);
     	
     glColor3fv(&(color.r));
     
@@ -286,35 +268,35 @@ void setGlui() {
 	GLUI *glui = GLUI_Master.create_glui ("OPTIONS", 0, w, 0);
 	
 	GLUI_Panel *obj_panel = glui->add_panel ("Camera translation");
-	GLUI_Spinner *segment_spinner  = glui->add_spinner_to_panel (obj_panel, "x", GLUI_SPINNER_FLOAT, &(translate.x));
-	GLUI_Spinner *segment_spinner2 = glui->add_spinner_to_panel (obj_panel, "y", GLUI_SPINNER_FLOAT, &(translate.y));
-	GLUI_Spinner *segment_spinner3 = glui->add_spinner_to_panel (obj_panel, "z", GLUI_SPINNER_FLOAT, &(translate.z));	
-	glui->add_checkbox_to_panel(obj_panel, "Look at object", &lookat, NULL);	
+	GLUI_Spinner *segment_spinner  = glui->add_spinner_to_panel (obj_panel, "x(left/right)", GLUI_SPINNER_FLOAT, &(translate.x));
+	GLUI_Spinner *segment_spinner2 = glui->add_spinner_to_panel (obj_panel, "y(up/down)", GLUI_SPINNER_FLOAT, &(translate.y));
+	GLUI_Spinner *segment_spinner3 = glui->add_spinner_to_panel (obj_panel, "z(scroll)", GLUI_SPINNER_FLOAT, &(translate.z));	
+	glui->add_checkbox_to_panel(obj_panel, "Look at object(l)", &lookat, NULL);	
 	
 	GLUI_Panel *obj_panel2 = glui->add_panel ("Camera rotation");
-	GLUI_Spinner *segment_spinner4 = glui->add_spinner_to_panel (obj_panel2, "x", GLUI_SPINNER_FLOAT, &(rotation.x));
+	GLUI_Spinner *segment_spinner4 = glui->add_spinner_to_panel (obj_panel2, "x(z/x)", GLUI_SPINNER_FLOAT, &(rotation.x));
 	segment_spinner4->set_float_limits(0, 360, GLUI_LIMIT_WRAP);
-	GLUI_Spinner *segment_spinner5 = glui->add_spinner_to_panel (obj_panel2, "y", GLUI_SPINNER_FLOAT, &(rotation.y));
+	GLUI_Spinner *segment_spinner5 = glui->add_spinner_to_panel (obj_panel2, "y(c/v)", GLUI_SPINNER_FLOAT, &(rotation.y));
 	segment_spinner5->set_float_limits(0, 360, GLUI_LIMIT_WRAP);
-	GLUI_Spinner *segment_spinner6 = glui->add_spinner_to_panel (obj_panel2, "z", GLUI_SPINNER_FLOAT, &(rotation.z));
+	GLUI_Spinner *segment_spinner6 = glui->add_spinner_to_panel (obj_panel2, "z(b/n)", GLUI_SPINNER_FLOAT, &(rotation.z));
 	segment_spinner6->set_float_limits(0, 360, GLUI_LIMIT_WRAP);
 	
 	GLUI_Panel *obj_panel3 = glui->add_panel ("Rendering");
-	glui->add_checkbox_to_panel(obj_panel3, "CW vertex order?", &vertex_orientation, NULL);	
-	GLUI_Spinner *segment_spinner7 = glui->add_spinner_to_panel (obj_panel3, "z near:", GLUI_SPINNER_FLOAT, &(cam.znear));
+	glui->add_checkbox_to_panel(obj_panel3, "CW vertex order?(h)", &vertex_orientation, NULL);	
+	GLUI_Spinner *segment_spinner7 = glui->add_spinner_to_panel (obj_panel3, "z near(a/s):", GLUI_SPINNER_FLOAT, &(cam.znear));
 	segment_spinner7->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
-	GLUI_Spinner *segment_spinner8 = glui->add_spinner_to_panel (obj_panel3, "z far:", GLUI_SPINNER_FLOAT, &(cam.zfar));
+	GLUI_Spinner *segment_spinner8 = glui->add_spinner_to_panel (obj_panel3, "z far(d/f):", GLUI_SPINNER_FLOAT, &(cam.zfar));
 	segment_spinner8->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
 	GLUI_Spinner *segment_spinner12 = glui->add_spinner_to_panel (obj_panel3, "fov y:", GLUI_SPINNER_FLOAT, &(cam.fovy));
 	segment_spinner12->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
 	GLUI_Spinner *segment_spinner13 = glui->add_spinner_to_panel (obj_panel3, "fov x:", GLUI_SPINNER_FLOAT, &(cam.fovx));
 	segment_spinner13->set_float_limits(0, 9999, GLUI_LIMIT_CLAMP);
 	
-	glui->add_checkbox_to_panel(obj_panel3, "Points", &point, NULL);	
-	glui->add_checkbox_to_panel(obj_panel3, "Wireframe", &wireframe, NULL);
-	glui->add_checkbox_to_panel(obj_panel3, "Polygons", &polygon, NULL);
-	glui->add_checkbox_to_panel(obj_panel3, "Backface culling", &bfculling, NULL);
-	glui->add_checkbox_to_panel(obj_panel3, "Lighting", &lighting, NULL);
+	glui->add_checkbox_to_panel(obj_panel3, "Points(p)", &point, NULL);	
+	glui->add_checkbox_to_panel(obj_panel3, "Wireframe(w)", &wireframe, NULL);
+	glui->add_checkbox_to_panel(obj_panel3, "Polygons(t)", &polygon, NULL);
+	glui->add_checkbox_to_panel(obj_panel3, "Backface culling(j)", &bfculling, NULL);
+	glui->add_checkbox_to_panel(obj_panel3, "Lighting(k)", &lighting, NULL);
 
 	GLUI_Panel *obj_panel4 = glui->add_panel ("Color");
 	GLUI_Spinner *segment_spinner9 = glui->add_spinner_to_panel (obj_panel4, "R:", GLUI_SPINNER_FLOAT, &(color.r));
@@ -325,7 +307,7 @@ void setGlui() {
 	segment_spinner11->set_float_limits(0, 1, GLUI_LIMIT_CLAMP);
 	
 	GLUI_Panel *obj_panel5 = glui->add_panel ("");
-	GLUI_Button *button = glui->add_button_to_panel (obj_panel5, "Reset Camera", NULL, GLUI_Update_CB(reset));
+	GLUI_Button *button = glui->add_button_to_panel (obj_panel5, "Reset Camera(r)", NULL, GLUI_Update_CB(reset));
 	GLUI_EditText *edittext = glui->add_edittext_to_panel (obj_panel5, "File name:", GLUI_EDITTEXT_TEXT, file, NULL);
 	GLUI_Button *button2 = glui->add_button_to_panel (obj_panel5, "Load Model", NULL, GLUI_Update_CB(load));
 	

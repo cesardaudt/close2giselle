@@ -169,7 +169,7 @@ void close2gl::mainLoop() {
 				
 				//CW case			
 				if(*vertex_orientation != 0) {
-					if(dot_result < 0) {
+					if(dot_result <= 0) {
 						triangles[i].draw = false;
 					}
 				}
@@ -209,15 +209,6 @@ void close2gl::mainLoop() {
 
 	//Draw
 	//done at display func
-	
-	//debbug
-	cout << "Camera vectors" << endl;
-	cout << "u: <" << cam->u.x << ", " << cam->u.y << ", " << cam->u.z << ">" << endl;
-	cout << "v: <" << cam->v.x << ", " << cam->v.y << ", " << cam->v.z << ">" << endl;
-	cout << "n: <" << cam->n.x << ", " << cam->n.y << ", " << cam->n.z << ">" << endl;
-	
-	cout << "Camera position" << endl;
-	cout << "Oc: <" << cam->look_from.x << ", " << cam->look_from.y << ", " << cam->look_from.z << ">" << endl;
 
 	system("clear");
 }
