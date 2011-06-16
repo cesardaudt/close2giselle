@@ -10,6 +10,10 @@ close2gl::close2gl(int width, int height, int win_x, int win_y, int* bfculling, 
 	this->n_clipped_triangles = 0;
 	this->cam				  = cam;
 	this->mesh				  = mesh;
+	
+	this->framebuffer		  = (unsigned char*) malloc(CHANNELS * width * height * sizeof(unsigned char));
+	
+	memset(this->framebuffer, 0, CHANNELS * width * height);
 	//Now, we have the triangle mesh and u,v,n vectors
 	//To display the image, we should perform:
 	//1)Coordinates mapping (WCS->CCS and CCS->SCS)
@@ -28,6 +32,7 @@ close2gl::close2gl() {
 	bfculling = NULL;
 	cam   = NULL;
 	mesh  = NULL;
+	framebuffer = NULL;
 }
 
 close2gl::~close2gl() {}
@@ -162,8 +167,8 @@ void close2gl::mainLoop() {
 			//if the triangle passed the clipping stage, we should perform culling
 			if(triangles[i].draw == true){
 				triangles[i].t_normal = 
-					vector3f::crossProduct(triangles[i].v0.vec - triangles[i].v1.vec,
-										   triangles[i].v0.vec - triangles[i].v2.vec);
+					vector3f::crossProduct(triangles[i].v1.vec - triangles[i].v0.vec,
+										   triangles[i].v2.vec - triangles[i].v0.vec);
 				
 				dot_result = vector3f::dotProduct(triangles[i].t_normal, cam->n);
 				
@@ -213,6 +218,63 @@ void close2gl::mainLoop() {
 	system("clear");
 }
 
+void close2gl::swap(int& a, int& b) {
+	int aux = a;
+	a = b;
+	b = aux;
+}
+
+void close2gl::plot(int x, int y) {
+	Color color = {255, 0, 0};
+	setPixel(framebuffer, width, height, CHANNELS, x, y, color);
+}
+
+void close2gl::bresenhamLine(int x0, int x1, int y0, int y1) {
+	int deltax, deltay, ystep, y, x;
+	double error, deltaerror;
+	bool steep;
+	steep = (abs(y1 - y0) > abs(x1 - x0));
+	
+	if(steep) {
+		swap(x0, y0);
+		swap(x1, y1);
+	}
+	if(x0 > x1) {
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+	
+	deltax = x1-x0;
+	deltay = abs(y1-y0);
+	error  = 0;
+	deltaerror = (double)deltay/(double)deltax;
+	y = y0;
+	
+	if(y0 < y1) {
+		ystep = 1;
+	}
+	else {
+		ystep = -1;
+	}
+	
+	for(x = x0; x<=x1; x++) {
+		if(steep) {
+			plot(y,x);
+		}
+		else {
+			plot(x,y);
+		}
+		
+		error = error+deltaerror;
+
+		if(error >= 0.5) {
+			y = y+ystep;
+			error = error - 1.0;
+		}
+	}
+}
+
+//debug
 void close2gl::printVec(vector4f v) {
 	printf("<%f,%f,%f,%f>\n", v.vec.x, v.vec.y, v.vec.z, v.w);
 }
